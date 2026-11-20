@@ -1,0 +1,27 @@
+# Tizim fayllari
+.DS_Store
+Thumbs.db
+*.log
+
+# Tahrirlovchi
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node (agar keyinchalik qo'shsangiz)
+node_modules/
+package-lock.json
+
+# Git
+.git/
+.gitignore
+
+# Test / vaqtinchalik
+*.test.html
+*.bak
+*.tmp
+
+# README va hujjatlar (sayt uchun kerak emas)
+README.md
+LICENSE

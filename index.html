@@ -1,0 +1,2673 @@
+<!doctype html>
+<html lang="uz" data-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+        <meta name="theme-color" content="#F7F6F2" />
+        <title>THE KNOWLEDGE ROOM FOR JONYIGIT</title>
+        <style>
+            /* ============ RANGLAR ============ */
+            :root {
+                --bg: #f7f6f2;
+                --bg-card: #ffffff;
+                --bg-side: #f0ede7;
+                --bg-hover: #e8e5de;
+                --bg-active: #e0dcd3;
+                --text: #263c32;
+                --text-2: #5a6b61;
+                --text-3: #8a958d;
+                --border: #d8d4ca;
+                --border-l: #e6e2d9;
+                --accent: #263c32;
+                --accent-l: #3d5c4c;
+                --accent-m: #7a9a87;
+                --danger: #b04a4a;
+                --danger-bg: #f8eded;
+                --success: #3d7a5c;
+                --success-bg: #edf5f0;
+                --warning: #8a7340;
+                --warning-bg: #f8f3e8;
+                --shadow: 0 1px 3px rgba(38, 60, 50, 0.07);
+                --shadow-md: 0 3px 10px rgba(38, 60, 50, 0.09);
+                --shadow-lg: 0 8px 24px rgba(38, 60, 50, 0.14);
+                --radius: 10px;
+                --radius-s: 6px;
+                --font: Georgia, "Times New Roman", serif;
+                --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            }
+            [data-theme="dark"] {
+                --bg: #1c2420;
+                --bg-card: #263c32;
+                --bg-side: #1a211d;
+                --bg-hover: #2e3f36;
+                --bg-active: #35483d;
+                --text: #e8e5de;
+                --text-2: #b0b8b2;
+                --text-3: #7a857e;
+                --border: #3a4a40;
+                --border-l: #2e3f36;
+                --accent: #c8d9cf;
+                --accent-l: #a8c0b2;
+                --accent-m: #6b8a78;
+                --danger: #d47373;
+                --danger-bg: #3a2525;
+                --success: #6ec29a;
+                --success-bg: #1e3328;
+                --warning: #c4a84d;
+                --warning-bg: #332e1e;
+                --shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                --shadow-md: 0 3px 10px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+            html {
+                -webkit-text-size-adjust: 100%;
+            }
+            body {
+                font-family: var(--sans);
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                min-height: 100vh;
+                min-height: 100dvh;
+                transition:
+                    background 0.2s,
+                    color 0.2s;
+                -webkit-font-smoothing: antialiased;
+                overflow-x: hidden;
+            }
+            h1,
+            h2,
+            h3 {
+                font-family: var(--font);
+                font-weight: 400;
+                line-height: 1.3;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+            }
+            h3 {
+                font-size: 1rem;
+            }
+            p {
+                color: var(--text-2);
+            }
+            button {
+                font-family: var(--sans);
+                cursor: pointer;
+            }
+            input,
+            textarea,
+            select {
+                font-family: var(--sans);
+                font-size: 16px;
+            }
+
+            /* ============ LAYOUT ============ */
+            .app {
+                display: flex;
+                min-height: 100vh;
+                min-height: 100dvh;
+            }
+
+            /* ============ SIDEBAR ============ */
+            .sidebar {
+                width: 240px;
+                background: var(--bg-side);
+                border-right: 1px solid var(--border);
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                display: flex;
+                flex-direction: column;
+                z-index: 100;
+                transition: transform 0.25s ease;
+                overscroll-behavior: contain;
+            }
+            .side-header {
+                padding: 22px 18px 16px;
+                border-bottom: 1px solid var(--border-l);
+                flex-shrink: 0;
+            }
+            .side-header .logo {
+                font-family: var(--font);
+                font-size: 0.95rem;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--accent);
+            }
+            .side-header .sub {
+                font-size: 0.65rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--text-3);
+                margin-top: 3px;
+            }
+            .side-nav {
+                flex: 1;
+                padding: 10px 8px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-btn {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+                padding: 11px 12px;
+                border: none;
+                background: none;
+                border-radius: var(--radius-s);
+                color: var(--text-2);
+                font-size: 0.9rem;
+                text-align: left;
+                transition:
+                    background 0.15s,
+                    color 0.15s;
+                position: relative;
+                min-height: 44px;
+            }
+            .nav-btn:hover {
+                background: var(--bg-hover);
+                color: var(--text);
+            }
+            .nav-btn.active {
+                background: var(--bg-active);
+                color: var(--text);
+                font-weight: 500;
+            }
+            .nav-btn.active::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 3px;
+                height: 16px;
+                background: var(--accent-l);
+                border-radius: 0 2px 2px 0;
+            }
+            .nav-btn svg {
+                width: 17px;
+                height: 17px;
+                flex-shrink: 0;
+                opacity: 0.75;
+            }
+            .nav-btn.active svg {
+                opacity: 1;
+            }
+
+            .side-footer {
+                padding: 12px;
+                border-top: 1px solid var(--border-l);
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                flex-shrink: 0;
+            }
+            .theme-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border: 1px solid var(--border);
+                background: var(--bg-card);
+                border-radius: var(--radius-s);
+                color: var(--text-2);
+                font-size: 0.82rem;
+                transition: all 0.15s;
+                min-height: 42px;
+            }
+            .theme-btn:hover {
+                background: var(--bg-hover);
+                color: var(--text);
+            }
+            .theme-btn svg {
+                width: 15px;
+                height: 15px;
+                flex-shrink: 0;
+            }
+
+            /* ============ MAIN ============ */
+            .main {
+                margin-left: 240px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .topbar {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                background: var(--bg);
+                border-bottom: 1px solid var(--border-l);
+                padding: 12px 28px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding-top: max(12px, env(safe-area-inset-top));
+                transition: background 0.2s;
+            }
+            .hamburger {
+                display: none;
+                background: none;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-s);
+                padding: 8px;
+                color: var(--text);
+                min-width: 42px;
+                min-height: 42px;
+                align-items: center;
+                justify-content: center;
+            }
+            .hamburger svg {
+                width: 20px;
+                height: 20px;
+                display: block;
+            }
+
+            .search-wrap {
+                flex: 1;
+                max-width: 480px;
+                position: relative;
+            }
+            .search-wrap input {
+                width: 100%;
+                padding: 10px 12px 10px 38px;
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                background: var(--bg-card);
+                color: var(--text);
+                font-size: 16px;
+                transition:
+                    border 0.15s,
+                    box-shadow 0.15s;
+                min-height: 42px;
+            }
+            .search-wrap input:focus {
+                outline: none;
+                border-color: var(--accent-m);
+                box-shadow: 0 0 0 3px rgba(122, 154, 135, 0.15);
+            }
+            .search-wrap .icon {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-3);
+                pointer-events: none;
+            }
+            .search-wrap .icon svg {
+                width: 16px;
+                height: 16px;
+                display: block;
+            }
+
+            .search-results {
+                position: absolute;
+                top: calc(100% + 4px);
+                left: 0;
+                right: 0;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-lg);
+                max-height: 60vh;
+                overflow-y: auto;
+                display: none;
+                z-index: 60;
+                -webkit-overflow-scrolling: touch;
+            }
+            .search-results.open {
+                display: block;
+            }
+            .sr-item {
+                padding: 11px 14px;
+                border-bottom: 1px solid var(--border-l);
+                cursor: pointer;
+                min-height: 48px;
+            }
+            .sr-item:last-child {
+                border-bottom: none;
+            }
+            .sr-item:hover,
+            .sr-item:active {
+                background: var(--bg-hover);
+            }
+            .sr-type {
+                font-size: 0.62rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--text-3);
+            }
+            .sr-title {
+                font-size: 0.86rem;
+                color: var(--text);
+            }
+            .sr-empty {
+                padding: 18px;
+                text-align: center;
+                color: var(--text-3);
+                font-size: 0.84rem;
+            }
+
+            .page {
+                padding: 28px;
+                max-width: 1000px;
+                width: 100%;
+                margin: 0 auto;
+                flex: 1;
+                padding-bottom: max(28px, env(safe-area-inset-bottom));
+            }
+            .page-head {
+                margin-bottom: 22px;
+            }
+            .page-head h1 {
+                margin-bottom: 4px;
+            }
+            .page-head .sub {
+                color: var(--text-3);
+                font-size: 0.88rem;
+            }
+
+            /* ============ COMPONENTS ============ */
+            .card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-l);
+                border-radius: var(--radius);
+                padding: 20px;
+                box-shadow: var(--shadow);
+            }
+            .card-title {
+                font-family: var(--font);
+                font-size: 1rem;
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text);
+            }
+            .card-title svg {
+                width: 17px;
+                height: 17px;
+                opacity: 0.6;
+                flex-shrink: 0;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                padding: 9px 16px;
+                border: 1px solid var(--border);
+                background: var(--bg-card);
+                color: var(--text);
+                border-radius: var(--radius-s);
+                font-size: 0.86rem;
+                transition: all 0.15s;
+                white-space: nowrap;
+                min-height: 42px;
+                line-height: 1.4;
+            }
+            .btn:hover {
+                background: var(--bg-hover);
+                border-color: var(--accent-m);
+            }
+            .btn:active {
+                transform: scale(0.98);
+            }
+            .btn svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+            .btn-primary {
+                background: var(--accent);
+                color: #f7f6f2;
+                border-color: var(--accent);
+            }
+            .btn-primary:hover {
+                background: var(--accent-l);
+                border-color: var(--accent-l);
+            }
+            .btn-danger {
+                background: var(--danger-bg);
+                color: var(--danger);
+                border-color: var(--danger);
+            }
+            .btn-danger:hover {
+                background: var(--danger);
+                color: #fff;
+            }
+            .btn-sm {
+                padding: 6px 11px;
+                font-size: 0.78rem;
+                min-height: 36px;
+            }
+            .btn-sm svg {
+                width: 12px;
+                height: 12px;
+            }
+            .btn-ghost {
+                border-color: transparent;
+                background: transparent;
+            }
+            .btn-ghost:hover {
+                background: var(--bg-hover);
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 3px 9px;
+                border-radius: 20px;
+                font-size: 0.68rem;
+                font-weight: 500;
+                line-height: 1.6;
+            }
+            .b-green {
+                background: var(--success-bg);
+                color: var(--success);
+            }
+            .b-beige {
+                background: var(--bg-hover);
+                color: var(--text-2);
+            }
+            .b-warn {
+                background: var(--warning-bg);
+                color: var(--warning);
+            }
+            .b-red {
+                background: var(--danger-bg);
+                color: var(--danger);
+            }
+
+            .empty {
+                text-align: center;
+                padding: 40px 16px;
+                color: var(--text-3);
+            }
+            .empty svg {
+                width: 36px;
+                height: 36px;
+                opacity: 0.35;
+                margin-bottom: 10px;
+            }
+            .empty h3 {
+                color: var(--text-2);
+                font-size: 0.95rem;
+                margin-bottom: 4px;
+                font-family: var(--sans);
+            }
+            .empty p {
+                font-size: 0.82rem;
+            }
+
+            .form-group {
+                margin-bottom: 14px;
+            }
+            .form-group label {
+                display: block;
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: var(--text-2);
+                margin-bottom: 5px;
+            }
+            .form-input,
+            .form-select,
+            .form-textarea {
+                width: 100%;
+                padding: 10px 12px;
+                border: 1px solid var(--border);
+                border-radius: var(--radius-s);
+                background: var(--bg-card);
+                color: var(--text);
+                font-size: 16px;
+                transition:
+                    border 0.15s,
+                    box-shadow 0.15s;
+                min-height: 44px;
+            }
+            .form-input:focus,
+            .form-select:focus,
+            .form-textarea:focus {
+                outline: none;
+                border-color: var(--accent-m);
+                box-shadow: 0 0 0 3px rgba(122, 154, 135, 0.15);
+            }
+            .form-textarea {
+                resize: vertical;
+                min-height: 90px;
+            }
+            .form-error {
+                color: var(--danger);
+                font-size: 0.76rem;
+                margin-top: 4px;
+                display: none;
+            }
+            .form-error.show {
+                display: block;
+            }
+
+            /* Modal — mobile-first */
+            .modal-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(20, 28, 24, 0.5);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 200;
+                padding: 16px;
+                backdrop-filter: blur(3px);
+                -webkit-backdrop-filter: blur(3px);
+            }
+            .modal-overlay.open {
+                display: flex;
+            }
+            .modal {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-lg);
+                width: 100%;
+                max-width: 500px;
+                max-height: 90vh;
+                max-height: 90dvh;
+                overflow-y: auto;
+                padding: 22px;
+                animation: modalIn 0.2s ease;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+            @keyframes modalIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(12px) scale(0.97);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+            .modal h2 {
+                margin-bottom: 16px;
+                font-size: 1.1rem;
+            }
+            .modal-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 18px;
+                flex-wrap: wrap;
+                position: sticky;
+                bottom: -22px;
+                background: var(--bg-card);
+                padding: 12px 0 0;
+                margin-bottom: -22px;
+                padding-bottom: 22px;
+                border-top: 1px solid var(--border-l);
+            }
+
+            /* Toast */
+            .toast-wrap {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 300;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                pointer-events: none;
+                bottom: max(20px, env(safe-area-inset-bottom));
+                right: max(20px, env(safe-area-inset-right));
+            }
+            .toast {
+                background: var(--accent);
+                color: #f7f6f2;
+                padding: 11px 17px;
+                border-radius: var(--radius);
+                font-size: 0.85rem;
+                box-shadow: var(--shadow-lg);
+                animation: toastIn 0.25s ease;
+                pointer-events: auto;
+                max-width: 320px;
+            }
+            .toast.error {
+                background: var(--danger);
+            }
+            @keyframes toastIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ============ PAGE: TOPICS ============ */
+            .topic-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 14px;
+            }
+            .topic-card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-l);
+                border-radius: var(--radius);
+                padding: 16px;
+                cursor: pointer;
+                transition: all 0.15s;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .topic-card:hover {
+                border-color: var(--accent-m);
+                box-shadow: var(--shadow-md);
+                transform: translateY(-1px);
+            }
+            .topic-card:active {
+                transform: scale(0.99);
+            }
+            .topic-card .cat {
+                font-size: 0.64rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--accent-m);
+                font-weight: 600;
+            }
+            .topic-card h3 {
+                font-size: 0.95rem;
+                word-break: break-word;
+            }
+            .topic-card p {
+                font-size: 0.78rem;
+                color: var(--text-3);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                word-break: break-word;
+            }
+            .topic-card .meta {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                margin-top: 4px;
+            }
+
+            /* Detail */
+            .detail-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 14px;
+                margin-bottom: 18px;
+                flex-wrap: wrap;
+            }
+            .detail-head h1 {
+                word-break: break-word;
+            }
+            .detail-actions {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            .detail-body {
+                font-size: 0.93rem;
+                line-height: 1.75;
+                color: var(--text-2);
+                word-break: break-word;
+            }
+            .detail-body h2 {
+                color: var(--text);
+                margin: 18px 0 8px;
+                font-size: 1.05rem;
+            }
+            .detail-body h3 {
+                color: var(--text);
+                margin: 14px 0 6px;
+                font-size: 0.95rem;
+            }
+            .detail-body p {
+                margin-bottom: 12px;
+            }
+            .detail-body ul,
+            .detail-body ol {
+                margin: 0 0 12px 20px;
+            }
+            .detail-body li {
+                margin-bottom: 5px;
+            }
+            .detail-body blockquote {
+                border-left: 3px solid var(--accent-m);
+                padding-left: 14px;
+                margin: 14px 0;
+                font-style: italic;
+                color: var(--text-3);
+            }
+            .detail-body img {
+                max-width: 100%;
+                height: auto;
+                border-radius: var(--radius-s);
+            }
+
+            /* ============ CREATIVE NOTE BLOCK ============ */
+            .note-block {
+                margin-top: 24px;
+                padding-top: 22px;
+                border-top: 1px dashed var(--border);
+            }
+            .note-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 14px;
+                flex-wrap: wrap;
+            }
+            .note-title-wrap {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .note-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--success-bg), var(--bg-hover));
+                border: 1px solid var(--border);
+                color: var(--accent-l);
+                flex-shrink: 0;
+                transition: transform 0.3s ease;
+            }
+            .note-block:focus-within .note-icon {
+                transform: rotate(-8deg) scale(1.05);
+            }
+            .note-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+            .note-title {
+                font-family: var(--font);
+                font-size: 1rem;
+                color: var(--text);
+                letter-spacing: -0.01em;
+                line-height: 1.2;
+            }
+            .note-sub {
+                font-size: 0.72rem;
+                color: var(--text-3);
+                margin-top: 2px;
+                font-style: italic;
+            }
+            .note-meta {
+                font-size: 0.72rem;
+                color: var(--text-3);
+                padding: 3px 10px;
+                background: var(--bg-hover);
+                border-radius: 20px;
+                white-space: nowrap;
+                transition: all 0.2s;
+            }
+            .note-meta.has-content {
+                background: var(--success-bg);
+                color: var(--success);
+            }
+
+            /* Paper-like textarea */
+            .note-paper {
+                position: relative;
+                border-radius: var(--radius);
+                background:
+                    repeating-linear-gradient(
+                        to bottom,
+                        transparent 0,
+                        transparent 31px,
+                        var(--border-l) 31px,
+                        var(--border-l) 32px
+                    ),
+                    var(--bg-card);
+                border: 1px solid var(--border);
+                padding: 16px 18px 16px 44px;
+                box-shadow: var(--shadow);
+                transition:
+                    box-shadow 0.2s,
+                    border-color 0.2s;
+                overflow: hidden;
+            }
+            .note-paper::before {
+                content: "";
+                position: absolute;
+                left: 26px;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: var(--danger);
+                opacity: 0.18;
+            }
+            .note-paper:focus-within {
+                border-color: var(--accent-m);
+                box-shadow:
+                    var(--shadow-md),
+                    0 0 0 3px rgba(122, 154, 135, 0.12);
+            }
+            .note-textarea {
+                width: 100%;
+                border: none;
+                background: transparent;
+                color: var(--text);
+                font-family: var(--font);
+                font-size: 1rem;
+                line-height: 32px;
+                resize: vertical;
+                min-height: 160px;
+                outline: none;
+                padding: 0;
+                caret-color: var(--accent-l);
+            }
+            .note-textarea::placeholder {
+                color: var(--text-3);
+                font-style: italic;
+                opacity: 0.7;
+                font-size: 0.92rem;
+                line-height: 32px;
+            }
+            .note-ribbon {
+                position: absolute;
+                top: 0;
+                right: 22px;
+                width: 28px;
+                height: 16px;
+                background: var(--accent-m);
+                opacity: 0.5;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+                pointer-events: none;
+                transition: opacity 0.2s;
+            }
+            .note-paper:focus-within .note-ribbon {
+                opacity: 1;
+            }
+
+            .note-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+                margin-top: 12px;
+                flex-wrap: wrap;
+            }
+            .note-status {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.74rem;
+                color: var(--text-3);
+                font-style: italic;
+            }
+            .note-status-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--text-3);
+                opacity: 0.5;
+                transition: all 0.2s;
+            }
+            .note-status-dot.saved {
+                background: var(--success);
+                opacity: 1;
+                box-shadow: 0 0 0 3px var(--success-bg);
+            }
+            .note-save-btn {
+                transition:
+                    transform 0.15s,
+                    box-shadow 0.2s;
+            }
+            .note-save-btn:hover {
+                box-shadow: var(--shadow-md);
+            }
+            .note-save-btn:active {
+                transform: scale(0.96);
+            }
+
+            @media (max-width: 500px) {
+                .note-paper {
+                    padding: 14px 14px 14px 36px;
+                }
+                .note-paper::before {
+                    left: 20px;
+                }
+                .note-textarea {
+                    font-size: 16px;
+                    line-height: 30px;
+                    min-height: 140px;
+                }
+                .note-ribbon {
+                    right: 14px;
+                    width: 22px;
+                    height: 14px;
+                }
+                .note-icon {
+                    width: 36px;
+                    height: 36px;
+                }
+                .note-title {
+                    font-size: 0.95rem;
+                }
+                .note-footer {
+                    flex-direction: column-reverse;
+                    align-items: stretch;
+                }
+                .note-save-btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+                .note-status {
+                    justify-content: center;
+                }
+            }
+
+            /* ============ PAGE: PROGRESS ============ */
+            .prog-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 14px;
+                margin-bottom: 22px;
+            }
+            .prog-stat {
+                background: var(--bg-card);
+                border: 1px solid var(--border-l);
+                border-radius: var(--radius);
+                padding: 18px;
+                text-align: center;
+            }
+            .prog-stat .num {
+                font-family: var(--font);
+                font-size: 1.9rem;
+                color: var(--accent);
+                line-height: 1.2;
+            }
+            .prog-stat .lbl {
+                font-size: 0.76rem;
+                color: var(--text-3);
+                margin-top: 3px;
+            }
+            .bar {
+                height: 8px;
+                background: var(--bg-hover);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-top: 8px;
+            }
+            .bar .fill {
+                height: 100%;
+                background: var(--accent-l);
+                border-radius: 4px;
+                transition: width 0.4s;
+            }
+
+            /* ============ PAGE: QUOTES ============ */
+            .quote-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .quote-card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-l);
+                border-radius: var(--radius);
+                padding: 18px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                transition: all 0.15s;
+            }
+            .quote-card:hover {
+                border-color: var(--accent-m);
+            }
+            .quote-card .q-text {
+                font-family: var(--font);
+                font-size: 1rem;
+                font-style: italic;
+                color: var(--text);
+                line-height: 1.6;
+                word-break: break-word;
+            }
+            .quote-card .q-author {
+                font-size: 0.82rem;
+                color: var(--text-3);
+                word-break: break-word;
+            }
+            .quote-card .q-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 4px;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            /* ============ PAGE: KNOWLEDGE ============ */
+            .k-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 14px;
+            }
+            .k-card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-l);
+                border-radius: var(--radius);
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                transition: all 0.15s;
+            }
+            .k-card:hover {
+                border-color: var(--accent-m);
+                box-shadow: var(--shadow);
+            }
+            .k-card h3 {
+                font-size: 0.93rem;
+                word-break: break-word;
+            }
+            .k-card .k-body {
+                font-size: 0.8rem;
+                color: var(--text-3);
+                display: -webkit-box;
+                -webkit-line-clamp: 4;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                word-break: break-word;
+            }
+            .k-card .k-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: auto;
+                padding-top: 6px;
+                font-size: 0.72rem;
+                color: var(--text-3);
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .k-tags {
+                display: flex;
+                gap: 3px;
+                flex-wrap: wrap;
+            }
+
+            /* Filters */
+            .filter-bar {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-bottom: 18px;
+                align-items: center;
+            }
+            .filter-bar .form-select {
+                width: auto;
+                min-width: 130px;
+            }
+            .filter-bar .form-input {
+                width: auto;
+                flex: 1;
+                min-width: 150px;
+            }
+
+            /* ============ MOBILE OPTIMIZATION ============ */
+            @media (max-width: 820px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                    width: 280px;
+                    box-shadow: var(--shadow-lg);
+                }
+                .sidebar.open {
+                    transform: translateX(0);
+                }
+                .main {
+                    margin-left: 0;
+                }
+                .hamburger {
+                    display: inline-flex;
+                }
+                .page {
+                    padding: 20px 16px;
+                    padding-bottom: max(20px, env(safe-area-inset-bottom));
+                }
+                .topbar {
+                    padding: 10px 16px;
+                    padding-top: max(10px, env(safe-area-inset-top));
+                }
+                .topic-grid,
+                .k-grid {
+                    grid-template-columns: 1fr;
+                }
+                .detail-head {
+                    flex-direction: column;
+                }
+                .detail-actions {
+                    width: 100%;
+                }
+                .detail-actions .btn {
+                    flex: 1;
+                    min-width: 0;
+                }
+            }
+
+            @media (max-width: 500px) {
+                h1 {
+                    font-size: 1.3rem;
+                }
+                .page-head h1 {
+                    font-size: 1.25rem;
+                }
+                .page-head .sub {
+                    font-size: 0.82rem;
+                }
+                .prog-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .filter-bar {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                .filter-bar .form-select,
+                .filter-bar .form-input {
+                    width: 100%;
+                }
+                .btn {
+                    padding: 10px 14px;
+                }
+                .modal {
+                    padding: 18px;
+                    max-height: 92vh;
+                    max-height: 92dvh;
+                }
+                .modal-actions {
+                    padding-bottom: 18px;
+                    margin-bottom: -18px;
+                    bottom: -18px;
+                    padding-top: 10px;
+                }
+                .modal-actions .btn {
+                    flex: 1;
+                }
+                .topbar {
+                    padding: 8px 12px;
+                    padding-top: max(8px, env(safe-area-inset-top));
+                }
+                .search-wrap input {
+                    padding-left: 34px;
+                    font-size: 16px;
+                }
+                .page {
+                    padding: 16px 12px;
+                }
+                .card {
+                    padding: 16px;
+                }
+                .topic-card,
+                .k-card {
+                    padding: 14px;
+                }
+                .quote-card {
+                    padding: 14px;
+                }
+                .toast-wrap {
+                    left: 12px;
+                    right: 12px;
+                    bottom: max(12px, env(safe-area-inset-bottom));
+                }
+                .toast {
+                    max-width: none;
+                    width: 100%;
+                }
+                .theme-btn,
+                .nav-btn {
+                    min-height: 46px;
+                }
+            }
+
+            @media (max-height: 500px) and (orientation: landscape) {
+                .modal {
+                    max-height: 95vh;
+                    max-height: 95dvh;
+                }
+                .side-header {
+                    padding: 14px 16px 10px;
+                }
+                .side-nav {
+                    padding: 6px;
+                }
+                .nav-btn {
+                    padding: 9px 10px;
+                    min-height: 40px;
+                }
+            }
+
+            @media (max-width: 820px) {
+                .sidebar.open::after {
+                    content: "";
+                    position: fixed;
+                    inset: 0;
+                    left: 280px;
+                    background: rgba(20, 28, 24, 0.4);
+                    z-index: -1;
+                }
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                html {
+                    scroll-behavior: smooth;
+                }
+            }
+
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--text-3);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app">
+            <!-- ===== SIDEBAR ===== -->
+            <aside class="sidebar" id="sidebar">
+                <div class="side-header">
+                    <div class="logo">The Knowledge Room</div>
+                    <div class="sub">Shaxsiy o'quv maskani</div>
+                </div>
+
+                <nav class="side-nav" id="sideNav">
+                    <button class="nav-btn active" data-page="topics">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                        </svg>
+                        Mavzular
+                    </button>
+                    <button class="nav-btn" data-page="progress">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M18 20V10" />
+                            <path d="M12 20V4" />
+                            <path d="M6 20v-6" />
+                        </svg>
+                        Progress
+                    </button>
+                    <button class="nav-btn" data-page="quotes">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"
+                            />
+                            <path
+                                d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"
+                            />
+                        </svg>
+                        Iqtiboslar
+                    </button>
+                    <button class="nav-btn" data-page="knowledge">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M12 2a3 3 0 00-3 3v1a3 3 0 00-3 3v1a3 3 0 000 6v1a3 3 0 003 3v1a3 3 0 006 0v-1a3 3 0 003-3v-1a3 3 0 000-6V9a3 3 0 00-3-3V5a3 3 0 00-3-3z"
+                            />
+                        </svg>
+                        Bilimlar bazasi
+                    </button>
+                </nav>
+
+                <div class="side-footer">
+                    <button class="theme-btn" id="themeBtn">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                        </svg>
+                        <span id="themeLabel">Dark Mode</span>
+                    </button>
+                    <button class="theme-btn" id="exportBtn">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Eksport
+                    </button>
+                </div>
+            </aside>
+
+            <!-- ===== MAIN ===== -->
+            <main class="main">
+                <div class="topbar">
+                    <button class="hamburger" id="hamburger" aria-label="Menyu">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        >
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
+                    <div class="search-wrap" id="searchWrap">
+                        <span class="icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                        </span>
+                        <input type="search" id="searchInput" placeholder="Qidirish…" autocomplete="off" />
+                        <div class="search-results" id="searchResults"></div>
+                    </div>
+                </div>
+
+                <div class="page" id="page"></div>
+            </main>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modalContent"></div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast-wrap" id="toastWrap"></div>
+
+        <script>
+            /* ============================================================
+   THE KNOWLEDGE ROOM — Sodda versiya (yangilangan)
+   Xususiyatlar:
+     - Mavzu "Tugatildi" deb belgilanganda avtomatik Bilimlar
+       bazasiga nusxalanadi (manba mavzu bilan bog'lanadi)
+     - Mobil qurilmalar uchun to'liq optimallashtirilgan
+     - Kreativ "qog'oz varaq" uslubidagi shaxsiy qayd bloki
+   ============================================================ */
+
+            /* ========== ICONS ========== */
+            const IC = {
+                plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+                trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>',
+                edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+                back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+                check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+                inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>',
+                book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
+                chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>',
+                quote: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>',
+                brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 00-3 3v1a3 3 0 00-3 3v1a3 3 0 000 6v1a3 3 0 003 3v1a3 3 0 006 0v-1a3 3 0 003-3v-1a3 3 0 000-6V9a3 3 0 00-3-3V5a3 3 0 00-3-3z"/></svg>',
+            };
+
+            /* ========== DEFAULT DATA ========== */
+            const KEY = "knowledgeRoom_simple_v2";
+
+            const DEFAULT = {
+                theme: "light",
+                topics: [
+                    {
+                        id: "t1",
+                        title: "Stoikizm asoslari",
+                        category: "Falsafa",
+                        description:
+                            "Qadimgi yunon falsafasi — ichki xotirjamlik va nazorat qilish mumkin bo'lgan narsalarga e'tibor berish.",
+                        status: "learning",
+                        content: `<h2>Stoikizm nima?</h2>
+<p>Stoikizm — miloddan avvalgi III asrda Zenon tomonidan asos solingan falsafiy maktab. Uning asosiy g'oyasi: tashqi voqealar bizning nazoratimizda emas, lekin ularga bo'lgan munosabatimiz — bizning qo'limizda.</p>
+<h3>Asosiy tamoyillar</h3>
+<ul>
+<li><strong>Dixotomiya nazorati:</strong> Nima nazoratimizda, nima emas — farqlash.</li>
+<li><strong>Virtus (fazilat):</strong> Yagona haqiqiy yaxshilik — bu fazilat.</li>
+<li><strong>Tabiatga mos yashash:</strong> Aql va tabiat qonunlariga muvofiq hayot kechirish.</li>
+</ul>
+<h3>Mashhur stoiklar</h3>
+<p>Mark Avreliy, Seneka, Epiktet — ularning asarlari bugungi kunda ham dolzarb.</p>
+<blockquote>"Nazorat qila oladigan narsangiz — o'z fikringiz." — Mark Avreliy</blockquote>`,
+                        notes: "",
+                        createdAt: new Date().toISOString(),
+                    },
+                    {
+                        id: "t2",
+                        title: "JavaScript asoslari",
+                        category: "Texnologiya",
+                        description: "Veb-dasturlash tili — DOM, eventlar, funksiyalar va asinxron kod.",
+                        status: "learning",
+                        content: `<h2>JavaScript nima?</h2>
+<p>JavaScript — brauzerda ishlaydigan dasturlash tili. U HTML va CSS bilan birga zamonaviy veb-saytlarning asosini tashkil qiladi.</p>
+<h3>Asosiy tushunchalar</h3>
+<ul>
+<li><strong>O'zgaruvchilar:</strong> let, const, var</li>
+<li><strong>Funksiyalar:</strong> function, arrow functions</li>
+<li><strong>DOM:</strong> document.querySelector, addEventListener</li>
+<li><strong>Asinxron:</strong> Promise, async/await</li>
+</ul>`,
+                        notes: "",
+                        createdAt: new Date().toISOString(),
+                    },
+                    {
+                        id: "t3",
+                        title: "Iqtisodiyot: Talab va taklif",
+                        category: "Iqtisodiyot",
+                        description: "Bozor narxlari qanday shakllanadi — xaridor va sotuvchi o'zaro munosabati.",
+                        status: "completed",
+                        content: `<h2>Talab va taklif qonuni</h2>
+<p>Narx oshsa — talab kamayadi. Narx tushsa — talab oshadi. Bu bozor iqtisodiyotining asosiy qonuni.</p>
+<h3>Muvozanat narxi</h3>
+<p>Talab va taklif kesishgan nuqtada bozor narxi shakllanadi. Bu nuqtada xaridor ham, sotuvchi ham mamnun.</p>`,
+                        notes: "Bu mavzuni yaxshi tushundim. Keyingi safar elastiklik haqida o'qishim kerak.",
+                        createdAt: new Date().toISOString(),
+                        knowledgeId: "k_auto_t3",
+                    },
+                ],
+                quotes: [
+                    {
+                        id: "q1",
+                        text: "Bilim — bu xazina, lekin uni ishlatish kaliti — amaliyot.",
+                        author: "Sharq hikmati",
+                        source: "Shaxsiy eslatma",
+                        createdAt: new Date().toISOString(),
+                    },
+                    {
+                        id: "q2",
+                        text: "O'zingizni boshqara olmasangiz, boshqalar sizni boshqaradi.",
+                        author: "Seneka",
+                        source: "Stoikizm",
+                        createdAt: new Date().toISOString(),
+                    },
+                ],
+                knowledge: [
+                    {
+                        id: "k1",
+                        title: "Albert Einstein",
+                        category: "Mashhur odamlar",
+                        body: "Nemis nazariy fizigi (1879–1955). Nisbiylik nazariyasi muallifi. 1921-yilda Nobel mukofotini oldi. E=mc² formulasi bilan mashhur.",
+                        tags: ["fizika", "fan", "nobel"],
+                        createdAt: new Date().toISOString(),
+                        sourceTopicId: null,
+                    },
+                    {
+                        id: "k2",
+                        title: "Fotosintez",
+                        category: "Fan",
+                        body: "O'simliklar quyosh energiyasidan foydalanib, karbonat angidrid va suvdan glyukoza va kislorod ishlab chiqaradi. Bu Yerdagi hayotning asosiy energiya manbai.",
+                        tags: ["biologiya", "kimyo", "tabiat"],
+                        createdAt: new Date().toISOString(),
+                        sourceTopicId: null,
+                    },
+                    {
+                        id: "k3",
+                        title: "Marie Curie",
+                        category: "Mashhur odamlar",
+                        body: "Polyak-fransuz olima (1867–1934). Radioaktivlik bo'yicha tadqiqotlar olib borgan. Ikki marta Nobel mukofotini olgan birinchi ayol. Poloniy va radiy elementlarini kashf etgan.",
+                        tags: ["kimyo", "fizika", "nobel"],
+                        createdAt: new Date().toISOString(),
+                        sourceTopicId: null,
+                    },
+                    {
+                        id: "k_auto_t3",
+                        title: "Iqtisodiyot: Talab va taklif",
+                        category: "Iqtisodiyot",
+                        body: "Talab va taklif qonuni: narx oshsa — talab kamayadi, narx tushsa — talab oshadi. Muvozanat narxi talab va taklif kesishgan nuqtada shakllanadi.\n\nShaxsiy qayd: Bu mavzuni yaxshi tushundim. Keyingi safar elastiklik haqida o'qishim kerak.",
+                        tags: ["iqtisodiyot", "bozor", "talab", "taklif"],
+                        createdAt: new Date().toISOString(),
+                        sourceTopicId: "t3",
+                    },
+                ],
+            };
+
+            /* ========== STORE ========== */
+            const Store = {
+                data: null,
+                load() {
+                    try {
+                        const raw = localStorage.getItem(KEY);
+                        if (raw) {
+                            const parsed = JSON.parse(raw);
+                            this.data = { ...DEFAULT, ...parsed };
+                            ["topics", "quotes", "knowledge"].forEach((k) => {
+                                if (!Array.isArray(this.data[k])) this.data[k] = DEFAULT[k];
+                            });
+                            this.data.knowledge.forEach((k) => {
+                                if (k.sourceTopicId === undefined) k.sourceTopicId = null;
+                            });
+                        } else {
+                            this.data = JSON.parse(JSON.stringify(DEFAULT));
+                            this.save();
+                        }
+                    } catch (e) {
+                        this.data = JSON.parse(JSON.stringify(DEFAULT));
+                    }
+                    this.applyTheme();
+                    return this.data;
+                },
+                save() {
+                    try {
+                        localStorage.setItem(KEY, JSON.stringify(this.data));
+                    } catch (e) {
+                        toast("Saqlashda xato", "error");
+                    }
+                },
+                applyTheme() {
+                    document.documentElement.setAttribute("data-theme", this.data.theme);
+                    const meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute("content", this.data.theme === "light" ? "#F7F6F2" : "#1C2420");
+                    const lbl = document.getElementById("themeLabel");
+                    if (lbl) lbl.textContent = this.data.theme === "light" ? "Dark Mode" : "Light Mode";
+                },
+                toggleTheme() {
+                    this.data.theme = this.data.theme === "light" ? "dark" : "light";
+                    this.applyTheme();
+                    this.save();
+                },
+
+                /* ---- TOPICS ---- */
+                addTopic(t) {
+                    this.data.topics.unshift(t);
+                    this.save();
+                },
+                updateTopic(id, patch) {
+                    const i = this.data.topics.findIndex((x) => x.id === id);
+                    if (i !== -1) {
+                        this.data.topics[i] = { ...this.data.topics[i], ...patch };
+                        this.save();
+                    }
+                },
+                deleteTopic(id) {
+                    const t = this.data.topics.find((x) => x.id === id);
+                    this.data.topics = this.data.topics.filter((x) => x.id !== id);
+                    if (t && t.knowledgeId) {
+                        this.data.knowledge = this.data.knowledge.filter((k) => k.id !== t.knowledgeId);
+                    }
+                    this.save();
+                },
+
+                toggleTopicStatus(id) {
+                    const t = this.data.topics.find((x) => x.id === id);
+                    if (!t) return { synced: false };
+
+                    if (t.status === "completed") {
+                        t.status = "learning";
+                        if (t.knowledgeId) {
+                            this.data.knowledge = this.data.knowledge.filter((k) => k.id !== t.knowledgeId);
+                            t.knowledgeId = null;
+                        }
+                        this.save();
+                        return { synced: false, removed: true };
+                    } else {
+                        t.status = "completed";
+                        this.syncTopicToKnowledge(t);
+                        this.save();
+                        return { synced: true };
+                    }
+                },
+
+                syncTopicToKnowledge(topic) {
+                    const plainText = this.stripHtml(topic.content || "").trim();
+                    const body = [
+                        plainText || topic.description || "Mavzu tugatilgan.",
+                        topic.notes ? `\n\nShaxsiy qayd: ${topic.notes}` : "",
+                    ]
+                        .join("")
+                        .trim();
+
+                    const tags = [topic.category.toLowerCase()];
+                    if (topic.title) {
+                        const words = topic.title
+                            .toLowerCase()
+                            .replace(/[^\w\s\u0400-\u04FF]/g, "")
+                            .split(/\s+/)
+                            .filter((w) => w.length > 3)
+                            .slice(0, 2);
+                        words.forEach((w) => {
+                            if (!tags.includes(w)) tags.push(w);
+                        });
+                    }
+
+                    if (topic.knowledgeId) {
+                        const k = this.data.knowledge.find((x) => x.id === topic.knowledgeId);
+                        if (k) {
+                            k.title = topic.title;
+                            k.category = topic.category;
+                            k.body = body;
+                            k.tags = tags;
+                            k.updatedAt = new Date().toISOString();
+                            return;
+                        }
+                    }
+
+                    const newId = uid("k_auto");
+                    this.data.knowledge.unshift({
+                        id: newId,
+                        title: topic.title,
+                        category: topic.category || "Umumiy",
+                        body: body,
+                        tags: tags,
+                        createdAt: new Date().toISOString(),
+                        sourceTopicId: topic.id,
+                    });
+                    topic.knowledgeId = newId;
+                },
+
+                stripHtml(html) {
+                    if (!html) return "";
+                    const tmp = document.createElement("div");
+                    tmp.innerHTML = html;
+                    return (tmp.textContent || tmp.innerText || "").replace(/\s+/g, " ").trim();
+                },
+
+                /* ---- QUOTES ---- */
+                addQuote(q) {
+                    this.data.quotes.unshift(q);
+                    this.save();
+                },
+                updateQuote(id, patch) {
+                    const i = this.data.quotes.findIndex((x) => x.id === id);
+                    if (i !== -1) {
+                        this.data.quotes[i] = { ...this.data.quotes[i], ...patch };
+                        this.save();
+                    }
+                },
+                deleteQuote(id) {
+                    this.data.quotes = this.data.quotes.filter((x) => x.id !== id);
+                    this.save();
+                },
+
+                /* ---- KNOWLEDGE ---- */
+                addKnowledge(k) {
+                    this.data.knowledge.unshift(k);
+                    this.save();
+                },
+                updateKnowledge(id, patch) {
+                    const i = this.data.knowledge.findIndex((x) => x.id === id);
+                    if (i !== -1) {
+                        this.data.knowledge[i] = { ...this.data.knowledge[i], ...patch };
+                        this.save();
+                    }
+                },
+                deleteKnowledge(id) {
+                    const k = this.data.knowledge.find((x) => x.id === id);
+                    this.data.knowledge = this.data.knowledge.filter((x) => x.id !== id);
+                    if (k && k.sourceTopicId) {
+                        const t = this.data.topics.find((x) => x.id === k.sourceTopicId);
+                        if (t) {
+                            t.knowledgeId = null;
+                        }
+                    }
+                    this.save();
+                },
+
+                /* ---- EXPORT ---- */
+                export() {
+                    const blob = new Blob(
+                        [
+                            JSON.stringify(
+                                {
+                                    app: "THE KNOWLEDGE ROOM",
+                                    exportedAt: new Date().toISOString(),
+                                    ...this.data,
+                                },
+                                null,
+                                2,
+                            ),
+                        ],
+                        { type: "application/json" },
+                    );
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `knowledge-room-${new Date().toISOString().slice(0, 10)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    toast("Ma'lumotlar eksport qilindi");
+                },
+            };
+
+            /* ========== HELPERS ========== */
+            const $ = (s, c = document) => c.querySelector(s);
+            const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+            const esc = (s) =>
+                String(s == null ? "" : s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            const uid = (p) => p + "_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+            const fmtDate = (iso) => {
+                if (!iso) return "";
+                try {
+                    return new Date(iso).toLocaleDateString("uz-UZ", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                    });
+                } catch {
+                    return "";
+                }
+            };
+
+            function toast(msg, type = "") {
+                const w = $("#toastWrap");
+                const el = document.createElement("div");
+                el.className = "toast" + (type ? " " + type : "");
+                el.textContent = msg;
+                w.appendChild(el);
+                setTimeout(() => {
+                    el.style.opacity = "0";
+                    el.style.transition = "opacity .3s";
+                    setTimeout(() => el.remove(), 300);
+                }, 3000);
+            }
+
+            function confirmDialog(title, msg, onOk) {
+                const ov = $("#modalOverlay");
+                const mc = $("#modalContent");
+                mc.innerHTML = `
+    <h2>${esc(title)}</h2>
+    <p style="color:var(--text-2);font-size:.88rem;margin-bottom:14px;">${esc(msg)}</p>
+    <div class="modal-actions">
+      <button class="btn" id="cCancel">Bekor qilish</button>
+      <button class="btn btn-danger" id="cOk">Tasdiqlash</button>
+    </div>`;
+                ov.classList.add("open");
+                const close = () => ov.classList.remove("open");
+                $("#cCancel").onclick = close;
+                $("#cOk").onclick = () => {
+                    close();
+                    onOk();
+                };
+                ov.onclick = (e) => {
+                    if (e.target === ov) close();
+                };
+            }
+
+            function emptyState(title, sub) {
+                return `<div class="empty">${IC.inbox}<h3>${esc(title)}</h3><p>${esc(sub || "")}</p></div>`;
+            }
+
+            /* ========== RENDERERS ========== */
+
+            /* ---- Topics page ---- */
+            function renderTopics() {
+                const topics = Store.data.topics;
+                return `
+    <div class="page-head">
+      <h1>Mavzular</h1>
+      <p class="sub">O'rganmoqchi bo'lgan mavzularingizni qo'shing va kuzatib boring.</p>
+    </div>
+    <div class="filter-bar">
+      <select class="form-select" id="topicFilter">
+        <option value="all">Barchasi</option>
+        <option value="learning">O'rganilmoqda</option>
+        <option value="completed">Tugatilgan</option>
+      </select>
+      <input type="search" class="form-input" id="topicSearch" placeholder="Mavzu qidirish…" />
+      <button class="btn btn-primary" data-action="add-topic">${IC.plus} Yangi mavzu</button>
+    </div>
+    <div class="topic-grid" id="topicGrid">
+      ${topics.map((t) => topicCard(t)).join("")}
+    </div>
+    ${topics.length === 0 ? emptyState("Hali mavzu yo'q", "Birinchi mavzuni qo'shing.") : ""}
+  `;
+            }
+
+            function topicCard(t) {
+                return `
+    <div class="topic-card" data-topic-id="${t.id}">
+      <div class="cat">${esc(t.category)}</div>
+      <h3>${esc(t.title)}</h3>
+      <p>${esc(t.description)}</p>
+      <div class="meta">
+        ${
+            t.status === "completed"
+                ? '<span class="badge b-green">Tugatilgan · Bilimda</span>'
+                : '<span class="badge b-beige">O\'rganilmoqda</span>'
+        }
+        ${t.notes && t.notes.trim() ? '<span class="badge b-beige">Qayd bor</span>' : ""}
+      </div>
+    </div>`;
+            }
+
+            function renderTopicDetail(id) {
+                const t = Store.data.topics.find((x) => x.id === id);
+                if (!t) return emptyState("Mavzu topilmadi", "");
+                const synced = t.status === "completed" && t.knowledgeId;
+                return `
+    <button class="btn btn-ghost btn-sm" data-action="back-topics" style="margin-bottom:14px;">${IC.back} Orqaga</button>
+    <div class="detail-head">
+      <div>
+        <div class="badge b-beige" style="margin-bottom:6px;">${esc(t.category)}</div>
+        <h1>${esc(t.title)}</h1>
+        <p class="sub" style="color:var(--text-3);font-size:.85rem;margin-top:3px;">${esc(t.description)}</p>
+      </div>
+      <div class="detail-actions">
+        <button class="btn ${t.status === "completed" ? "btn-primary" : ""}" data-action="toggle-topic" data-id="${t.id}">
+          ${IC.check} ${t.status === "completed" ? "Tugatilgan" : "O‘zlashtirildi"}
+        </button>
+        <button class="btn" data-action="edit-topic" data-id="${t.id}">${IC.edit} Tahrirlash</button>
+        <button class="btn btn-danger" data-action="delete-topic" data-id="${t.id}">${IC.trash} O'chirish</button>
+      </div>
+    </div>
+    ${
+        synced
+            ? `
+      <div class="card" style="margin-bottom:14px;background:var(--success-bg);border-color:var(--success);">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--success);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;"><polyline points="20 6 9 17 4 12"/></svg>
+          <div>
+            <strong>Bu mavzu Bilimlar bazasiga qo'shildi.</strong>
+            <div style="margin-top:4px;font-size:.8rem;opacity:.85;">
+              <a href="#knowledge" data-action="goto-knowledge" style="color:var(--success);text-decoration:underline;">Bilimlar bazasida ko'rish →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+            : ""
+    }
+    <div class="card">
+      <div class="detail-body">${t.content || '<p style="color:var(--text-3);">Kontent yo\'q.</p>'}</div>
+      <div class="note-block">
+        <div class="note-header">
+          <div class="note-title-wrap">
+            <span class="note-icon">${IC.brain}</span>
+            <div>
+              <div class="note-title">Shaxsiy qayd</div>
+              <div class="note-sub">Fikrlaringiz, savollaringiz, kashfiyotlaringiz</div>
+            </div>
+          </div>
+          <div class="note-meta${t.notes && t.notes.trim() ? " has-content" : ""}" id="noteMeta">${t.notes && t.notes.trim() ? t.notes.trim().split(/\s+/).length + " so'z" : "Hali bo'sh"}</div>
+        </div>
+        <div class="note-paper">
+          <textarea class="note-textarea" id="topicNotes" rows="5" placeholder="Bu yerga o'z fikrlaringizni yozing…&#10;&#10;Masalan:&#10;• Nima yangi o'rgandim?&#10;• Qanday savollar tug'ildi?&#10;• Bu menga qanday aloqasi bor?">${esc(t.notes || "")}</textarea>
+          <div class="note-ribbon" aria-hidden="true"></div>
+        </div>
+        <div class="note-footer">
+          <div class="note-status" id="noteStatus">
+            ${
+                t.notes && t.notes.trim()
+                    ? `<span class="note-status-dot saved"></span> Saqlangan`
+                    : `<span class="note-status-dot"></span> Hali yozilmagan`
+            }
+          </div>
+          <button class="btn btn-primary btn-sm note-save-btn" data-action="save-topic-notes" data-id="${t.id}">
+            ${IC.check} Qaydni saqlash
+          </button>
+        </div>
+      </div>
+    </div>`;
+            }
+
+            /* ---- Progress page ---- */
+            function renderProgress() {
+                const topics = Store.data.topics;
+                const total = topics.length;
+                const done = topics.filter((t) => t.status === "completed").length;
+                const pct = total ? Math.round((done / total) * 100) : 0;
+                const quotesCount = Store.data.quotes.length;
+                const knowledgeCount = Store.data.knowledge.length;
+
+                return `
+    <div class="page-head">
+      <h1>Progress</h1>
+      <p class="sub">Umumiy taraqqiyotingiz bir qarashda.</p>
+    </div>
+    <div class="prog-grid">
+      <div class="prog-stat">
+        <div class="num">${done}/${total}</div>
+        <div class="lbl">Tugatilgan mavzular</div>
+        <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+        <div style="font-size:.75rem;color:var(--text-3);margin-top:4px;">${pct}%</div>
+      </div>
+      <div class="prog-stat">
+        <div class="num">${quotesCount}</div>
+        <div class="lbl">Iqtiboslar</div>
+      </div>
+      <div class="prog-stat">
+        <div class="num">${knowledgeCount}</div>
+        <div class="lbl">Bilim yozuvlari</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="card-title">${IC.chart} Mavzular bo'yicha holat</div>
+      ${
+          total
+              ? topics
+                    .map(
+                        (t) => `
+        <div style="padding:8px 0;border-bottom:1px solid var(--border-l);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:.86rem;">${esc(t.title)} <span style="color:var(--text-3);font-size:.75rem;">— ${esc(t.category)}</span></span>
+          <span class="badge ${t.status === "completed" ? "b-green" : "b-beige"}">${t.status === "completed" ? "Tugatilgan" : "O'rganilmoqda"}</span>
+        </div>`,
+                    )
+                    .join("")
+              : `<p style="color:var(--text-3);font-size:.85rem;">Hali mavzu yo'q.</p>`
+      }
+    </div>
+  `;
+            }
+
+            /* ---- Quotes page ---- */
+            function renderQuotes() {
+                const quotes = Store.data.quotes;
+                return `
+    <div class="page-head">
+      <h1>Iqtiboslar</h1>
+      <p class="sub">Eshitgan, o'qigan va yodda qolgan so'zlaringiz.</p>
+    </div>
+    <div class="filter-bar">
+      <input type="search" class="form-input" id="quoteSearch" placeholder="Iqtibos qidirish…" />
+      <button class="btn btn-primary" data-action="add-quote">${IC.plus} Yangi iqtibos</button>
+    </div>
+    <div class="quote-list" id="quoteList">
+      ${quotes.map((q) => quoteCard(q)).join("")}
+    </div>
+    ${quotes.length === 0 ? emptyState("Hali iqtibos yo'q", "Birinchi iqtibosingizni qo'shing.") : ""}
+  `;
+            }
+
+            function quoteCard(q) {
+                return `
+    <div class="quote-card" data-quote-id="${q.id}">
+      <div class="q-text">"${esc(q.text)}"</div>
+      <div class="q-author">— ${esc(q.author)}${q.source ? " · " + esc(q.source) : ""}</div>
+      <div class="q-footer">
+        <span style="font-size:.72rem;color:var(--text-3);">${fmtDate(q.createdAt)}</span>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-sm btn-ghost" data-action="edit-quote" data-id="${q.id}">${IC.edit} Tahrir</button>
+          <button class="btn btn-sm btn-ghost" data-action="delete-quote" data-id="${q.id}">${IC.trash} O'chirish</button>
+        </div>
+      </div>
+    </div>`;
+            }
+
+            /* ---- Knowledge page ---- */
+            function renderKnowledge() {
+                const items = Store.data.knowledge;
+                const cats = [...new Set(items.map((k) => k.category))].sort();
+                return `
+    <div class="page-head">
+      <h1>Bilimlar bazasi</h1>
+      <p class="sub">O'rgangan hamma narsangiz — mashhur odamlar, faktlar, tushunchalar.</p>
+    </div>
+    <div class="filter-bar">
+      <select class="form-select" id="kFilter">
+        <option value="all">Barchasi</option>
+        ${cats.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join("")}
+      </select>
+      <input type="search" class="form-input" id="kSearch" placeholder="Qidirish…" />
+      <button class="btn btn-primary" data-action="add-knowledge">${IC.plus} Yangi yozuv</button>
+    </div>
+    <div class="k-grid" id="kGrid">
+      ${items.map((k) => knowledgeCard(k)).join("")}
+    </div>
+    ${items.length === 0 ? emptyState("Hali bilim yo'q", "Birinchi yozuvingizni qo'shing.") : ""}
+  `;
+            }
+
+            function knowledgeCard(k) {
+                const fromTopic = !!k.sourceTopicId;
+                return `
+    <div class="k-card" data-k-id="${k.id}">
+      <div class="cat" style="font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-m);font-weight:600;">${esc(k.category)}${fromTopic ? " · Mavzudan" : ""}</div>
+      <h3>${esc(k.title)}</h3>
+      <div class="k-body">${esc(k.body)}</div>
+      <div class="k-footer">
+        <div class="k-tags">
+          ${(k.tags || [])
+              .slice(0, 3)
+              .map((t) => `<span class="badge b-beige">#${esc(t)}</span>`)
+              .join("")}
+        </div>
+        <div style="display:flex;gap:3px;">
+          <button class="btn btn-sm btn-ghost" data-action="edit-knowledge" data-id="${k.id}" title="Tahrirlash">${IC.edit}</button>
+          <button class="btn btn-sm btn-ghost" data-action="delete-knowledge" data-id="${k.id}" title="O'chirish">${IC.trash}</button>
+        </div>
+      </div>
+    </div>`;
+            }
+
+            /* ========== MODALS ========== */
+
+            function openTopicModal(id = null) {
+                const t = id ? Store.data.topics.find((x) => x.id === id) : null;
+                const ov = $("#modalOverlay");
+                const mc = $("#modalContent");
+                mc.innerHTML = `
+    <h2>${t ? "Mavzuni tahrirlash" : "Yangi mavzu"}</h2>
+    <div class="form-group">
+      <label>Sarlavha *</label>
+      <input class="form-input" id="tTitle" value="${esc(t ? t.title : "")}" placeholder="Masalan: Stoikizm asoslari" />
+      <div class="form-error" id="tTitleErr">Sarlavha kiritish shart.</div>
+    </div>
+    <div class="form-group">
+      <label>Kategoriya</label>
+      <input class="form-input" id="tCat" value="${esc(t ? t.category : "")}" placeholder="Falsafa, Texnologiya, Fan…" />
+    </div>
+    <div class="form-group">
+      <label>Qisqa tavsif</label>
+      <input class="form-input" id="tDesc" value="${esc(t ? t.description : "")}" placeholder="Bir jumlada mavzu haqida" />
+    </div>
+    <div class="form-group">
+      <label>Kontent (ixtiyoriy, HTML qo'llab-quvvatlanadi)</label>
+      <textarea class="form-textarea" id="tContent" rows="5" placeholder="Batafsil ma'lumot…">${esc(t ? t.content : "")}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Holat</label>
+      <select class="form-select" id="tStatus">
+        <option value="learning" ${t && t.status === "learning" ? "selected" : ""}>O'rganilmoqda</option>
+        <option value="completed" ${t && t.status === "completed" ? "selected" : ""}>Tugatilgan</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="tCancel">Bekor qilish</button>
+      <button class="btn btn-primary" id="tSave">${t ? "Saqlash" : "Qo'shish"}</button>
+    </div>`;
+                ov.classList.add("open");
+                const close = () => ov.classList.remove("open");
+                $("#tCancel").onclick = close;
+                $("#tSave").onclick = () => {
+                    const title = $("#tTitle").value.trim();
+                    if (!title) {
+                        $("#tTitleErr").classList.add("show");
+                        return;
+                    }
+                    const newStatus = $("#tStatus").value;
+                    const data = {
+                        title,
+                        category: $("#tCat").value.trim() || "Umumiy",
+                        description: $("#tDesc").value.trim(),
+                        content: $("#tContent").value,
+                        status: newStatus,
+                    };
+                    if (t) {
+                        Store.updateTopic(t.id, data);
+                        if (newStatus === "completed" && !t.knowledgeId) {
+                            const updated = Store.data.topics.find((x) => x.id === t.id);
+                            Store.syncTopicToKnowledge(updated);
+                            Store.save();
+                            toast("Mavzu yangilandi va Bilimlar bazasiga qo'shildi");
+                        } else if (newStatus === "learning" && t.knowledgeId) {
+                            Store.data.knowledge = Store.data.knowledge.filter((k) => k.id !== t.knowledgeId);
+                            Store.updateTopic(t.id, { knowledgeId: null });
+                            toast("Mavzu yangilandi");
+                        } else {
+                            toast("Mavzu yangilandi");
+                        }
+                    } else {
+                        const newTopic = {
+                            id: uid("t"),
+                            ...data,
+                            notes: "",
+                            createdAt: new Date().toISOString(),
+                            knowledgeId: null,
+                        };
+                        Store.addTopic(newTopic);
+                        if (newStatus === "completed") {
+                            const created = Store.data.topics.find((x) => x.id === newTopic.id);
+                            Store.syncTopicToKnowledge(created);
+                            Store.save();
+                            toast("Mavzu qo'shildi va Bilimlar bazasiga joylandi");
+                        } else {
+                            toast("Mavzu qo'shildi");
+                        }
+                    }
+                    close();
+                    Router.render();
+                };
+                ov.onclick = (e) => {
+                    if (e.target === ov) close();
+                };
+                $("#tTitle").focus();
+            }
+
+            function openQuoteModal(id = null) {
+                const q = id ? Store.data.quotes.find((x) => x.id === id) : null;
+                const ov = $("#modalOverlay");
+                const mc = $("#modalContent");
+                mc.innerHTML = `
+    <h2>${q ? "Iqtibosni tahrirlash" : "Yangi iqtibos"}</h2>
+    <div class="form-group">
+      <label>Iqtibos matni *</label>
+      <textarea class="form-textarea" id="qText" rows="3" placeholder="Iqtibos…">${esc(q ? q.text : "")}</textarea>
+      <div class="form-error" id="qTextErr">Matn kiritish shart.</div>
+    </div>
+    <div class="form-group">
+      <label>Muallif</label>
+      <input class="form-input" id="qAuthor" value="${esc(q ? q.author : "")}" placeholder="Kim aytgan?" />
+    </div>
+    <div class="form-group">
+      <label>Manba</label>
+      <input class="form-input" id="qSource" value="${esc(q ? q.source : "")}" placeholder="Kitob, ma'ruza, video…" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="qCancel">Bekor qilish</button>
+      <button class="btn btn-primary" id="qSave">${q ? "Saqlash" : "Qo'shish"}</button>
+    </div>`;
+                ov.classList.add("open");
+                const close = () => ov.classList.remove("open");
+                $("#qCancel").onclick = close;
+                $("#qSave").onclick = () => {
+                    const text = $("#qText").value.trim();
+                    if (!text) {
+                        $("#qTextErr").classList.add("show");
+                        return;
+                    }
+                    const data = {
+                        text,
+                        author: $("#qAuthor").value.trim() || "Noma'lum",
+                        source: $("#qSource").value.trim(),
+                    };
+                    if (q) {
+                        Store.updateQuote(q.id, data);
+                        toast("Iqtibos yangilandi");
+                    } else {
+                        Store.addQuote({ id: uid("q"), ...data, createdAt: new Date().toISOString() });
+                        toast("Iqtibos qo'shildi");
+                    }
+                    close();
+                    Router.render();
+                };
+                ov.onclick = (e) => {
+                    if (e.target === ov) close();
+                };
+                $("#qText").focus();
+            }
+
+            function openKnowledgeModal(id = null) {
+                const k = id ? Store.data.knowledge.find((x) => x.id === id) : null;
+                const ov = $("#modalOverlay");
+                const mc = $("#modalContent");
+                const isAuto = k && k.sourceTopicId;
+                mc.innerHTML = `
+    <h2>${k ? "Yozuvni tahrirlash" : "Yangi bilim yozuvi"}</h2>
+    ${isAuto ? `<p style="font-size:.8rem;color:var(--text-3);margin-bottom:12px;padding:8px 10px;background:var(--bg-hover);border-radius:var(--radius-s);">Bu yozuv "Mavzular" bo'limidan avtomatik yaratilgan.</p>` : ""}
+    <div class="form-group">
+      <label>Sarlavha *</label>
+      <input class="form-input" id="kTitle" value="${esc(k ? k.title : "")}" placeholder="Masalan: Albert Einstein" />
+      <div class="form-error" id="kTitleErr">Sarlavha kiritish shart.</div>
+    </div>
+    <div class="form-group">
+      <label>Kategoriya</label>
+      <input class="form-input" id="kCat" value="${esc(k ? k.category : "")}" placeholder="Mashhur odamlar, Fan, Tarix…" />
+    </div>
+    <div class="form-group">
+      <label>Mazmun *</label>
+      <textarea class="form-textarea" id="kBody" rows="5" placeholder="Nima o'rgandingiz?">${esc(k ? k.body : "")}</textarea>
+      <div class="form-error" id="kBodyErr">Mazmun kiritish shart.</div>
+    </div>
+    <div class="form-group">
+      <label>Teglar (vergul bilan)</label>
+      <input class="form-input" id="kTags" value="${esc(k ? (k.tags || []).join(", ") : "")}" placeholder="fizika, fan, nobel" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="kCancel">Bekor qilish</button>
+      <button class="btn btn-primary" id="kSave">${k ? "Saqlash" : "Qo'shish"}</button>
+    </div>`;
+                ov.classList.add("open");
+                const close = () => ov.classList.remove("open");
+                $("#kCancel").onclick = close;
+                $("#kSave").onclick = () => {
+                    const title = $("#kTitle").value.trim();
+                    const body = $("#kBody").value.trim();
+                    let ok = true;
+                    if (!title) {
+                        $("#kTitleErr").classList.add("show");
+                        ok = false;
+                    }
+                    if (!body) {
+                        $("#kBodyErr").classList.add("show");
+                        ok = false;
+                    }
+                    if (!ok) return;
+                    const data = {
+                        title,
+                        category: $("#kCat").value.trim() || "Umumiy",
+                        body,
+                        tags: $("#kTags")
+                            .value.split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                    };
+                    if (k) {
+                        Store.updateKnowledge(k.id, data);
+                        toast("Yozuv yangilandi");
+                    } else {
+                        Store.addKnowledge({
+                            id: uid("k"),
+                            ...data,
+                            createdAt: new Date().toISOString(),
+                            sourceTopicId: null,
+                        });
+                        toast("Yozuv qo'shildi");
+                    }
+                    close();
+                    Router.render();
+                };
+                ov.onclick = (e) => {
+                    if (e.target === ov) close();
+                };
+                $("#kTitle").focus();
+            }
+
+            /* ========== ROUTER ========== */
+            const Router = {
+                page: "topics",
+                detailId: null,
+
+                go(page, detailId = null) {
+                    this.page = page;
+                    this.detailId = detailId;
+                    const hash = detailId ? `#${page}/${detailId}` : `#${page}`;
+                    if (location.hash !== hash) history.pushState(null, "", hash);
+                    this.render();
+                    this.syncNav();
+                    $("#sidebar").classList.remove("open");
+                },
+
+                parse() {
+                    const h = location.hash.replace("#", "") || "topics";
+                    const [p, id] = h.split("/");
+                    return { page: p, id };
+                },
+
+                render() {
+                    const c = $("#page");
+                    const p = this.page;
+                    let html = "";
+                    if (p === "topics") html = this.detailId ? renderTopicDetail(this.detailId) : renderTopics();
+                    else if (p === "progress") html = renderProgress();
+                    else if (p === "quotes") html = renderQuotes();
+                    else if (p === "knowledge") html = renderKnowledge();
+                    else html = renderTopics();
+                    c.innerHTML = html;
+                    this.bind();
+                    window.scrollTo(0, 0);
+                },
+
+                syncNav() {
+                    $$(".nav-btn").forEach((b) => {
+                        b.classList.toggle("active", b.dataset.page === this.page);
+                    });
+                },
+
+                bind() {
+                    // Topics
+                    $$(".topic-card[data-topic-id]").forEach((c) => {
+                        c.onclick = () => this.go("topics", c.dataset.topicId);
+                    });
+                    $$('[data-action="add-topic"]').forEach((b) => (b.onclick = () => openTopicModal()));
+                    $$('[data-action="back-topics"]').forEach((b) => (b.onclick = () => this.go("topics")));
+                    $$('[data-action="goto-knowledge"]').forEach((b) => {
+                        b.onclick = (e) => {
+                            e.preventDefault();
+                            this.go("knowledge");
+                        };
+                    });
+                    $$('[data-action="toggle-topic"]').forEach((b) => {
+                        b.onclick = () => {
+                            const result = Store.toggleTopicStatus(b.dataset.id);
+                            if (result.synced) {
+                                toast("Mavzu tugatildi va Bilimlar bazasiga qo'shildi");
+                            } else if (result.removed) {
+                                toast("Mavzu qayta \"O'rganilmoqda\" holatiga o'tkazildi");
+                            }
+                            this.render();
+                        };
+                    });
+                    $$('[data-action="edit-topic"]').forEach((b) => (b.onclick = () => openTopicModal(b.dataset.id)));
+                    $$('[data-action="delete-topic"]').forEach((b) => {
+                        b.onclick = () => {
+                            confirmDialog(
+                                "Mavzuni o'chirish?",
+                                "Bu amalni qaytarib bo'lmaydi. Agar mavzu Bilimlar bazasiga bog'langan bo'lsa, u yozuv ham o'chiriladi.",
+                                () => {
+                                    Store.deleteTopic(b.dataset.id);
+                                    this.go("topics");
+                                    toast("Mavzu o'chirildi");
+                                },
+                            );
+                        };
+                    });
+
+                    // === SHAXSIY QAYD — saqlash + jonli yangilash ===
+                    $$('[data-action="save-topic-notes"]').forEach((b) => {
+                        b.onclick = () => {
+                            const ta = $("#topicNotes");
+                            if (ta) {
+                                Store.updateTopic(b.dataset.id, { notes: ta.value });
+                                const t = Store.data.topics.find((x) => x.id === b.dataset.id);
+                                if (t && t.status === "completed" && t.knowledgeId) {
+                                    Store.syncTopicToKnowledge(t);
+                                    Store.save();
+                                }
+                                // Yangilangan vizual holat
+                                const meta = $("#noteMeta");
+                                const status = $("#noteStatus");
+                                const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+                                if (meta) {
+                                    meta.textContent = words ? words + " so'z" : "Hali bo'sh";
+                                    meta.classList.toggle("has-content", words > 0);
+                                }
+                                if (status) {
+                                    status.innerHTML = words
+                                        ? '<span class="note-status-dot saved"></span> Saqlangan'
+                                        : '<span class="note-status-dot"></span> Hali yozilmagan';
+                                }
+                                toast("Qayd saqlandi");
+                            }
+                        };
+                    });
+
+                    // === JONLI SO'Z SANAGICHI ===
+                    const noteTa = $("#topicNotes");
+                    if (noteTa) {
+                        const updateNoteMeta = () => {
+                            const meta = $("#noteMeta");
+                            if (meta) {
+                                const words = noteTa.value.trim() ? noteTa.value.trim().split(/\s+/).length : 0;
+                                meta.textContent = words ? words + " so'z" : "Hali bo'sh";
+                                meta.classList.toggle("has-content", words > 0);
+                            }
+                        };
+                        noteTa.addEventListener("input", updateNoteMeta);
+                        updateNoteMeta();
+                    }
+
+                    // Topic filters
+                    const tf = $("#topicFilter"),
+                        ts = $("#topicSearch");
+                    if (tf && ts) {
+                        const apply = () => {
+                            const cat = tf.value,
+                                q = ts.value.toLowerCase();
+                            $$("#topicGrid .topic-card").forEach((c) => {
+                                const t = Store.data.topics.find((x) => x.id === c.dataset.topicId);
+                                if (!t) return;
+                                const okCat = cat === "all" || t.status === cat;
+                                const okQ =
+                                    !q ||
+                                    t.title.toLowerCase().includes(q) ||
+                                    t.description.toLowerCase().includes(q) ||
+                                    t.category.toLowerCase().includes(q);
+                                c.style.display = okCat && okQ ? "" : "none";
+                            });
+                        };
+                        tf.onchange = apply;
+                        ts.oninput = apply;
+                    }
+
+                    // Quotes
+                    $$('[data-action="add-quote"]').forEach((b) => (b.onclick = () => openQuoteModal()));
+                    $$('[data-action="edit-quote"]').forEach(
+                        (b) =>
+                            (b.onclick = (e) => {
+                                e.stopPropagation();
+                                openQuoteModal(b.dataset.id);
+                            }),
+                    );
+                    $$('[data-action="delete-quote"]').forEach((b) => {
+                        b.onclick = (e) => {
+                            e.stopPropagation();
+                            confirmDialog("Iqtibosni o'chirish?", "Bu amalni qaytarib bo'lmaydi.", () => {
+                                Store.deleteQuote(b.dataset.id);
+                                this.render();
+                                toast("Iqtibos o'chirildi");
+                            });
+                        };
+                    });
+                    const qs = $("#quoteSearch");
+                    if (qs) {
+                        qs.oninput = () => {
+                            const q = qs.value.toLowerCase();
+                            $$("#quoteList .quote-card").forEach((c) => {
+                                const item = Store.data.quotes.find((x) => x.id === c.dataset.quoteId);
+                                if (!item) return;
+                                const ok =
+                                    !q || item.text.toLowerCase().includes(q) || item.author.toLowerCase().includes(q);
+                                c.style.display = ok ? "" : "none";
+                            });
+                        };
+                    }
+
+                    // Knowledge
+                    $$('[data-action="add-knowledge"]').forEach((b) => (b.onclick = () => openKnowledgeModal()));
+                    $$('[data-action="edit-knowledge"]').forEach(
+                        (b) =>
+                            (b.onclick = (e) => {
+                                e.stopPropagation();
+                                openKnowledgeModal(b.dataset.id);
+                            }),
+                    );
+                    $$('[data-action="delete-knowledge"]').forEach((b) => {
+                        b.onclick = (e) => {
+                            e.stopPropagation();
+                            confirmDialog("Yozuvni o'chirish?", "Bu amalni qaytarib bo'lmaydi.", () => {
+                                Store.deleteKnowledge(b.dataset.id);
+                                this.render();
+                                toast("Yozuv o'chirildi");
+                            });
+                        };
+                    });
+                    const kf = $("#kFilter"),
+                        ks = $("#kSearch");
+                    if (kf && ks) {
+                        const apply = () => {
+                            const cat = kf.value,
+                                q = ks.value.toLowerCase();
+                            $$("#kGrid .k-card").forEach((c) => {
+                                const item = Store.data.knowledge.find((x) => x.id === c.dataset.kId);
+                                if (!item) return;
+                                const okCat = cat === "all" || item.category === cat;
+                                const okQ =
+                                    !q ||
+                                    item.title.toLowerCase().includes(q) ||
+                                    item.body.toLowerCase().includes(q) ||
+                                    (item.tags || []).some((t) => t.toLowerCase().includes(q));
+                                c.style.display = okCat && okQ ? "" : "none";
+                            });
+                        };
+                        kf.onchange = apply;
+                        ks.oninput = apply;
+                    }
+                },
+            };
+
+            /* ========== GLOBAL SEARCH ========== */
+            function initSearch() {
+                const input = $("#searchInput");
+                const res = $("#searchResults");
+                if (!input || !res) return;
+
+                input.addEventListener("input", () => {
+                    const q = input.value.trim().toLowerCase();
+                    if (!q) {
+                        res.classList.remove("open");
+                        res.innerHTML = "";
+                        return;
+                    }
+                    const matches = [];
+                    Store.data.topics.forEach((t) => {
+                        if (
+                            t.title.toLowerCase().includes(q) ||
+                            t.description.toLowerCase().includes(q) ||
+                            t.category.toLowerCase().includes(q)
+                        )
+                            matches.push({ type: "Mavzu", title: t.title, page: "topics", id: t.id });
+                    });
+                    Store.data.quotes.forEach((qq) => {
+                        if (qq.text.toLowerCase().includes(q) || qq.author.toLowerCase().includes(q))
+                            matches.push({ type: "Iqtibos", title: qq.text.slice(0, 60), page: "quotes" });
+                    });
+                    Store.data.knowledge.forEach((k) => {
+                        if (
+                            k.title.toLowerCase().includes(q) ||
+                            k.body.toLowerCase().includes(q) ||
+                            (k.tags || []).some((t) => t.toLowerCase().includes(q))
+                        )
+                            matches.push({ type: "Bilim", title: k.title, page: "knowledge" });
+                    });
+                    if (!matches.length) {
+                        res.innerHTML = `<div class="sr-empty">"${esc(q)}" bo'yicha natija yo'q</div>`;
+                    } else {
+                        res.innerHTML = matches
+                            .slice(0, 8)
+                            .map(
+                                (m) => `
+        <div class="sr-item" data-page="${m.page}" data-id="${m.id || ""}">
+          <div class="sr-type">${esc(m.type)}</div>
+          <div class="sr-title">${esc(m.title)}</div>
+        </div>`,
+                            )
+                            .join("");
+                        $$(".sr-item", res).forEach((el) => {
+                            el.onclick = () => {
+                                res.classList.remove("open");
+                                input.value = "";
+                                Router.go(el.dataset.page, el.dataset.id || null);
+                            };
+                        });
+                    }
+                    res.classList.add("open");
+                });
+
+                document.addEventListener("click", (e) => {
+                    if (!e.target.closest("#searchWrap")) res.classList.remove("open");
+                });
+            }
+
+            /* ========== INIT ========== */
+            function init() {
+                Store.load();
+
+                $$(".nav-btn").forEach((b) => (b.onclick = () => Router.go(b.dataset.page)));
+                $("#themeBtn").onclick = () => Store.toggleTheme();
+                $("#exportBtn").onclick = () => Store.export();
+                $("#hamburger").onclick = () => $("#sidebar").classList.toggle("open");
+
+                document.addEventListener("click", (e) => {
+                    if (window.innerWidth <= 820) {
+                        const sb = $("#sidebar");
+                        if (
+                            sb.classList.contains("open") &&
+                            !e.target.closest("#sidebar") &&
+                            !e.target.closest("#hamburger")
+                        ) {
+                            sb.classList.remove("open");
+                        }
+                    }
+                });
+
+                window.addEventListener("popstate", () => {
+                    const { page, id } = Router.parse();
+                    Router.page = page || "topics";
+                    Router.detailId = id || null;
+                    Router.render();
+                    Router.syncNav();
+                });
+
+                const { page, id } = Router.parse();
+                Router.page = page || "topics";
+                Router.detailId = id || null;
+                Router.render();
+                Router.syncNav();
+
+                initSearch();
+
+                const ov = $("#modalOverlay");
+                ov.addEventListener("click", (e) => {
+                    if (e.target === ov) ov.classList.remove("open");
+                });
+
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") {
+                        if (ov.classList.contains("open")) ov.classList.remove("open");
+                        const sr = $("#searchResults");
+                        if (sr) sr.classList.remove("open");
+                    }
+                });
+            }
+
+            if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+            else init();
+        </script>
+    </body>
+</html>
