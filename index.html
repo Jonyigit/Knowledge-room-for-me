@@ -414,6 +414,11 @@
                 flex-shrink: 0;
             }
 
+            /* Honour the HTML hidden attribute even when component classes set display. */
+            [hidden] {
+                display: none !important;
+            }
+
             .btn {
                 display: inline-flex;
                 align-items: center;
@@ -1444,20 +1449,8 @@
                         <input type="search" id="searchInput" placeholder="Qidirish…" autocomplete="off" />
                         <div class="search-results" id="searchResults"></div>
                     </div>
-                    <button
-                        class="btn btn-primary"
-                        id="pwaInstallBtn"
-                        type="button"
-                        style="min-height: 42px; padding: 9px 12px; font-size: 0.8rem"
-                    >
-                        Ilovani o‘rnatish
-                    </button>
-                    <span
-                        id="pwaNetworkStatus"
-                        aria-live="polite"
-                        style="font-size: 0.72rem; color: var(--text-3); white-space: nowrap"
-                        >Online</span
-                    >
+                    <button class="btn btn-primary" id="pwaInstallBtn" type="button" style="min-height:42px;padding:9px 12px;font-size:.8rem;">Ilovani o‘rnatish</button>
+                    <span id="pwaNetworkStatus" aria-live="polite" style="font-size:.72rem;color:var(--text-3);white-space:nowrap;">Online</span>
                 </div>
 
                 <div class="page" id="page"></div>
@@ -2693,89 +2686,81 @@
         </script>
 
         <script>
-            /* THE KNOWLEDGE ROOM — PWA support */
-            (() => {
-                const installButton = document.getElementById("pwaInstallBtn");
-                const networkStatus = document.getElementById("pwaNetworkStatus");
-                let installPrompt = null;
-                const isStandalone = () =>
-                    window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+        /* THE KNOWLEDGE ROOM — PWA support */
+        (() => {
+            const installButton = document.getElementById("pwaInstallBtn");
+            const networkStatus = document.getElementById("pwaNetworkStatus");
+            let installPrompt = null;
+            const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 
-                function updateNetworkStatus() {
-                    if (!networkStatus) return;
-                    networkStatus.textContent = navigator.onLine ? "Online" : "Offline";
-                    networkStatus.style.color = navigator.onLine ? "var(--success)" : "var(--warning)";
-                }
-                window.addEventListener("online", updateNetworkStatus);
-                window.addEventListener("offline", updateNetworkStatus);
-                updateNetworkStatus();
+            function updateNetworkStatus() {
+                if (!networkStatus) return;
+                networkStatus.textContent = navigator.onLine ? "Online" : "Offline";
+                networkStatus.style.color = navigator.onLine ? "var(--success)" : "var(--warning)";
+            }
+            window.addEventListener("online", updateNetworkStatus);
+            window.addEventListener("offline", updateNetworkStatus);
+            updateNetworkStatus();
 
-                if (isStandalone() && installButton) installButton.hidden = true;
+            if (isStandalone() && installButton) installButton.hidden = true;
 
-                window.addEventListener("beforeinstallprompt", (event) => {
-                    event.preventDefault();
-                    installPrompt = event;
-                    if (installButton && !isStandalone()) installButton.hidden = false;
+            window.addEventListener("beforeinstallprompt", (event) => {
+                event.preventDefault();
+                installPrompt = event;
+                if (installButton && !isStandalone()) installButton.hidden = false;
+            });
+
+            if (installButton) {
+                installButton.addEventListener("click", async () => {
+                    if (isStandalone()) {
+                        installButton.hidden = true;
+                        return;
+                    }
+                    if (installPrompt) {
+                        installPrompt.prompt();
+                        await installPrompt.userChoice;
+                        installPrompt = null;
+                        installButton.hidden = true;
+                        return;
+                    }
+                    const ua = navigator.userAgent || "";
+                    if (/iphone|ipad|ipod/i.test(ua)) {
+                        alert("iPhone yoki iPad’da: Safari orqali saytni oching → Share (Ulashish) → Add to Home Screen (Bosh ekranga qo‘shish) → Add.");
+                    } else if (/android/i.test(ua)) {
+                        alert("Chrome menyusini (⋮) oching va ‘Install app’ yoki ‘Add to Home screen’ bandini tanlang.");
+                    } else {
+                        alert("Brauzer menyusidan ‘Install app’ yoki ‘Add to Home screen’ bandini tanlang.");
+                    }
                 });
+            }
 
-                if (installButton) {
-                    installButton.addEventListener("click", async () => {
-                        if (isStandalone()) {
-                            installButton.hidden = true;
-                            return;
-                        }
-                        if (installPrompt) {
-                            installPrompt.prompt();
-                            await installPrompt.userChoice;
-                            installPrompt = null;
-                            installButton.hidden = true;
-                            return;
-                        }
-                        const ua = navigator.userAgent || "";
-                        if (/iphone|ipad|ipod/i.test(ua)) {
-                            alert(
-                                "iPhone yoki iPad’da: Safari orqali saytni oching → Share (Ulashish) → Add to Home Screen (Bosh ekranga qo‘shish) → Add.",
-                            );
-                        } else if (/android/i.test(ua)) {
-                            alert(
-                                "Chrome menyusini (⋮) oching va ‘Install app’ yoki ‘Add to Home screen’ bandini tanlang.",
-                            );
-                        } else {
-                            alert("Brauzer menyusidan ‘Install app’ yoki ‘Add to Home screen’ bandini tanlang.");
-                        }
-                    });
-                }
+            window.addEventListener("appinstalled", () => {
+                if (installButton) installButton.hidden = true;
+                installPrompt = null;
+            });
 
-                window.addEventListener("appinstalled", () => {
-                    if (installButton) installButton.hidden = true;
-                    installPrompt = null;
-                });
-
-                if (
-                    "serviceWorker" in navigator &&
-                    (location.protocol === "https:" || location.hostname === "localhost")
-                ) {
-                    window.addEventListener("load", async () => {
-                        try {
-                            const registration = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
-                            registration.addEventListener("updatefound", () => {
-                                const worker = registration.installing;
-                                if (!worker) return;
-                                worker.addEventListener("statechange", () => {
-                                    if (worker.state === "installed" && navigator.serviceWorker.controller) {
-                                        console.info("The Knowledge Room: yangi versiya tayyor.");
-                                    }
-                                });
+            if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+                window.addEventListener("load", async () => {
+                    try {
+                        const registration = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+                        registration.addEventListener("updatefound", () => {
+                            const worker = registration.installing;
+                            if (!worker) return;
+                            worker.addEventListener("statechange", () => {
+                                if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                                    console.info("The Knowledge Room: yangi versiya tayyor.");
+                                }
                             });
-                            if (navigator.storage && navigator.storage.persist) {
-                                navigator.storage.persist().catch(() => {});
-                            }
-                        } catch (error) {
-                            console.warn("PWA service worker ro‘yxatdan o‘tmadi:", error);
+                        });
+                        if (navigator.storage && navigator.storage.persist) {
+                            navigator.storage.persist().catch(() => {});
                         }
-                    });
-                }
-            })();
+                    } catch (error) {
+                        console.warn("PWA service worker ro‘yxatdan o‘tmadi:", error);
+                    }
+                });
+            }
+        })();
         </script>
     </body>
 </html>
