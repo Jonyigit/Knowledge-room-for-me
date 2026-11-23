@@ -1481,23 +1481,25 @@
             (() => {
                 "use strict";
 
+                // Prevent duplicate controllers
+                if (window.VoiceController) return;
+
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
                 const synth = window.speechSynthesis;
 
                 if (!SpeechRecognition) {
-                    alert("Brauzeringiz ovozli boshqaruvni qo'llab-quvvatlamaydi. Chrome brauzeridan foydalaning.");
-                    return;
+                    console.warn("Speech Recognition is not supported.");
                 }
 
                 let awake = false;
                 let recognition = null;
-                let micGranted = false;
                 let manualStop = false;
                 let isStarting = false;
                 let restartTimer = null;
                 let currentLang = "uz-UZ";
                 let fallbackUsed = false;
+                let permissionGranted = false;
 
                 const pages = {
                     topics: ["mavzular", "mavzu", "topics", "topic", "мавзулар", "мавзу"],
@@ -1509,6 +1511,9 @@
                 // =========================================
                 // CONTROLLER UI
                 // =========================================
+
+                const oldUI = document.getElementById("voiceController");
+                if (oldUI) oldUI.remove();
 
                 const ui = document.createElement("div");
                 ui.id = "voiceController";
@@ -1524,241 +1529,181 @@
         </div>
 
         <div id="vcHeard"></div>
-
         <div id="vcResults"></div>
 
         <div class="vc-footer">
             <span>Voice Control</span>
             <span id="vcLanguage">UZ</span>
         </div>
+        <div class="vc-hint">Tap to start / stop</div>
     `;
 
-                const controllerStyle = document.createElement("style");
+                const style = document.createElement("style");
 
-                controllerStyle.textContent = `
+                style.textContent = `
         #voiceController {
-            --vc-bg: #ffffff;
-            --vc-text: #263c32;
-            --vc-muted: #78847d;
-            --vc-border: #e0e5e1;
-            --vc-hover: #f0f4f1;
-            --vc-result-border: #e7ebe8;
-            --vc-accent: #269b68;
+            --vc-bg:#fff;
+            --vc-text:#263c32;
+            --vc-muted:#78847d;
+            --vc-border:#e0e5e1;
+            --vc-hover:#f0f4f1;
+            --vc-result-border:#e7ebe8;
 
-            position: fixed;
-            right: 16px;
-            bottom: 20px;
-            z-index: 99999;
-
-            width: 280px;
-            max-width: calc(100vw - 24px);
-            box-sizing: border-box;
-
-            padding: 15px;
-            border-radius: 16px;
-
-            background: var(--vc-bg);
-            color: var(--vc-text);
-            border: 1px solid var(--vc-border);
-
-            box-shadow: 0 8px 30px rgba(0,0,0,.15);
-
-            font: 14px system-ui, sans-serif;
-            cursor: pointer;
-
-            transition:
-                background .25s ease,
-                color .25s ease,
-                border-color .25s ease,
-                box-shadow .25s ease;
-
-            overflow: hidden;
+            position:fixed;
+            right:16px;
+            bottom:20px;
+            z-index:999999;
+            width:280px;
+            max-width:calc(100vw - 24px);
+            box-sizing:border-box;
+            padding:15px;
+            border-radius:16px;
+            background:var(--vc-bg);
+            color:var(--vc-text);
+            border:1px solid var(--vc-border);
+            box-shadow:0 8px 30px rgba(0,0,0,.15);
+            font:14px system-ui,sans-serif;
+            cursor:pointer;
+            transition:background .25s,color .25s;
+            overflow:hidden;
+            -webkit-tap-highlight-color:transparent;
+            touch-action:manipulation;
         }
-
-        /* DARK MODE */
 
         html.dark #voiceController,
         body.dark #voiceController,
         html[data-theme="dark"] #voiceController {
-            --vc-bg: #1c2421;
-            --vc-text: #edf5ef;
-            --vc-muted: #a0ada5;
-            --vc-border: #35433b;
-            --vc-hover: #29372f;
-            --vc-result-border: #35433b;
-            --vc-accent: #51cf91;
-
-            box-shadow: 0 8px 30px rgba(0,0,0,.4);
+            --vc-bg:#1c2421;
+            --vc-text:#edf5ef;
+            --vc-muted:#a0ada5;
+            --vc-border:#35433b;
+            --vc-hover:#29372f;
+            --vc-result-border:#35433b;
+            box-shadow:0 8px 30px rgba(0,0,0,.4);
         }
 
-        /* HEADER */
-
         #voiceController .vc-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
 
         #voiceController .vc-icon {
-            width: 38px;
-            height: 38px;
-            min-width: 38px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: var(--vc-hover);
-            border-radius: 12px;
-            font-size: 19px;
+            width:38px;
+            height:38px;
+            min-width:38px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:var(--vc-hover);
+            border-radius:12px;
+            font-size:19px;
         }
 
         #voiceController .vc-heading {
-            flex: 1;
-            min-width: 0;
+            flex:1;
+            min-width:0;
         }
 
         #voiceController #vcStatus {
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.5;
-            color: var(--vc-text);
-            overflow-wrap: anywhere;
+            font-size:13px;
+            font-weight:700;
+            line-height:1.5;
+            overflow-wrap:anywhere;
         }
 
         #voiceController .vc-subtitle {
-            color: var(--vc-muted);
-            font-size: 11px;
-            margin-top: 2px;
+            color:var(--vc-muted);
+            font-size:11px;
+            margin-top:2px;
         }
 
         #voiceController .vc-indicator {
-            width: 9px;
-            height: 9px;
-            min-width: 9px;
-            border-radius: 50%;
-            background: #999;
-            transition: background .2s ease;
+            width:9px;
+            height:9px;
+            min-width:9px;
+            border-radius:50%;
+            background:#999;
         }
 
         #voiceController .vc-indicator.active {
-            background: #20bd78;
-            box-shadow: 0 0 10px #20bd7880;
+            background:#20bd78;
+            box-shadow:0 0 10px #20bd7880;
         }
-
-        /* HEARD TEXT */
 
         #voiceController #vcHeard {
-            color: var(--vc-muted);
-            font-size: 12px;
-            line-height: 1.5;
-            overflow-wrap: anywhere;
-            margin-top: 10px;
+            color:var(--vc-muted);
+            font-size:12px;
+            line-height:1.5;
+            overflow-wrap:anywhere;
+            margin-top:10px;
         }
 
-        /* SEARCH RESULTS */
-
         #voiceController #vcResults {
-            margin-top: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            overscroll-behavior: contain;
-            scrollbar-width: thin;
-            scrollbar-color: var(--vc-muted) transparent;
+            margin-top:8px;
+            max-height:180px;
+            overflow-y:auto;
+            overscroll-behavior:contain;
         }
 
         #voiceController #vcResults:empty {
-            display: none;
+            display:none;
         }
 
         #voiceController #vcResults > div {
-            padding: 9px 10px;
-            border-bottom: 1px solid var(--vc-result-border);
-            border-radius: 8px;
-            transition: background .2s ease;
+            padding:9px;
+            border-bottom:1px solid var(--vc-result-border);
+            border-radius:8px;
+            overflow-wrap:anywhere;
         }
-
-        #voiceController #vcResults > div:hover {
-            background: var(--vc-hover);
-        }
-
-        #voiceController #vcResults > div > div {
-            color: var(--vc-text);
-            overflow-wrap: anywhere;
-        }
-
-        #voiceController #vcResults > div > div:first-child {
-            color: var(--vc-muted);
-        }
-
-        /* FOOTER */
 
         #voiceController .vc-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            margin-top: 12px;
-            padding-top: 9px;
-
-            border-top: 1px solid var(--vc-border);
-
-            color: var(--vc-muted);
-            font-size: 10px;
-            letter-spacing: .04em;
-            text-transform: uppercase;
+            display:flex;
+            justify-content:space-between;
+            margin-top:12px;
+            padding-top:9px;
+            border-top:1px solid var(--vc-border);
+            color:var(--vc-muted);
+            font-size:10px;
+            letter-spacing:.04em;
+            text-transform:uppercase;
         }
 
-        #voiceController #vcLanguage {
-            font-weight: 700;
+        #voiceController .vc-hint {
+            color:var(--vc-muted);
+            font-size:10px;
+            margin-top:8px;
+            text-align:center;
         }
 
-        /* MOBILE */
-
-        @media (max-width: 600px) {
+        @media(max-width:600px) {
             #voiceController {
-                right: 10px;
-                bottom: 12px;
-                width: min(270px, calc(100vw - 20px));
-                max-width: calc(100vw - 20px);
-                padding: 12px;
-                border-radius: 14px;
+                right:10px;
+                bottom:12px;
+                width:min(270px,calc(100vw - 20px));
+                padding:12px;
             }
 
             #voiceController .vc-icon {
-                width: 34px;
-                height: 34px;
-                min-width: 34px;
-                font-size: 17px;
-            }
-
-            #voiceController #vcStatus {
-                font-size: 12px;
+                width:34px;
+                height:34px;
+                min-width:34px;
             }
 
             #voiceController #vcResults {
-                max-height: 130px;
+                max-height:130px;
             }
         }
 
-        @media (max-width: 360px) {
-            #voiceController {
-                right: 8px;
-                bottom: 8px;
-                width: calc(100vw - 16px);
-                max-width: calc(100vw - 16px);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
+        @media(prefers-reduced-motion:reduce) {
             #voiceController,
             #voiceController * {
-                transition: none !important;
+                transition:none!important;
             }
         }
     `;
 
-                document.head.appendChild(controllerStyle);
+                document.head.appendChild(style);
                 document.body.appendChild(ui);
 
                 const status = ui.querySelector("#vcStatus");
@@ -1767,14 +1712,13 @@
                 const indicator = ui.querySelector("#vcIndicator");
                 const languageLabel = ui.querySelector("#vcLanguage");
 
-                function setStatus(text) {
-                    status.textContent = text;
+                // =========================================
+                // STATUS
+                // =========================================
 
-                    if (awake) {
-                        indicator.classList.add("active");
-                    } else {
-                        indicator.classList.remove("active");
-                    }
+                function setStatus(message) {
+                    status.textContent = message;
+                    indicator.classList.toggle("active", awake);
                 }
 
                 function showHeard(text) {
@@ -1790,8 +1734,8 @@
                 // =========================================
 
                 function speak(text, callback) {
-                    if (!synth) {
-                        callback?.();
+                    if (!synth || !text) {
+                        if (callback) callback();
                         return;
                     }
 
@@ -1799,59 +1743,29 @@
 
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = "en-US";
+                    utterance.rate = 1;
 
-                    utterance.onend = () => callback?.();
-                    utterance.onerror = () => callback?.();
+                    utterance.onend = () => {
+                        if (callback) callback();
+                    };
+
+                    utterance.onerror = () => {
+                        if (callback) callback();
+                    };
 
                     synth.speak(utterance);
                 }
 
                 // =========================================
-                // MICROPHONE
-                // =========================================
-
-                async function requestMic() {
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({
-                            audio: true,
-                        });
-
-                        stream.getTracks().forEach((track) => track.stop());
-
-                        micGranted = true;
-                        return true;
-                    } catch (error) {
-                        micGranted = false;
-                        setStatus("❌ Microphone permission denied");
-                        console.error(error);
-                        return false;
-                    }
-                }
-
-                // =========================================
-                // DARK / LIGHT MODE
+                // THEME
                 // =========================================
 
                 function applyTheme(theme) {
-                    const isDark = theme === "dark";
+                    const dark = theme === "dark";
 
-                    document.documentElement.classList.toggle("dark", isDark);
-                    document.body.classList.toggle("dark", isDark);
-
+                    document.documentElement.classList.toggle("dark", dark);
+                    document.body.classList.toggle("dark", dark);
                     document.documentElement.setAttribute("data-theme", theme);
-
-                    // Controller ranglari
-                    ui.style.setProperty("--vc-bg", isDark ? "#1c2421" : "#ffffff");
-
-                    ui.style.setProperty("--vc-text", isDark ? "#edf5ef" : "#263c32");
-
-                    ui.style.setProperty("--vc-muted", isDark ? "#a0ada5" : "#78847d");
-
-                    ui.style.setProperty("--vc-border", isDark ? "#35433b" : "#e0e5e1");
-
-                    ui.style.setProperty("--vc-hover", isDark ? "#29372f" : "#f0f4f1");
-
-                    ui.style.setProperty("--vc-result-border", isDark ? "#35433b" : "#e7ebe8");
 
                     try {
                         localStorage.setItem("voice_theme", theme);
@@ -1870,23 +1784,16 @@
                     }
                 }
 
-                // Saqlangan temani tiklash
                 try {
-                    const savedTheme = localStorage.getItem("voice_theme");
+                    const saved = localStorage.getItem("voice_theme");
 
-                    if (savedTheme === "dark" || savedTheme === "light") {
-                        applyTheme(savedTheme);
-                    } else if (
-                        document.documentElement.classList.contains("dark") ||
-                        document.body.classList.contains("dark") ||
-                        document.documentElement.getAttribute("data-theme") === "dark"
-                    ) {
-                        applyTheme("dark");
+                    if (saved === "dark" || saved === "light") {
+                        applyTheme(saved);
                     }
                 } catch (e) {}
 
                 // =========================================
-                // PAGE NAVIGATION
+                // NAVIGATION
                 // =========================================
 
                 function openPage(page) {
@@ -1895,41 +1802,35 @@
                         return true;
                     }
 
-                    if (pages[page]) {
-                        location.hash = "#" + page;
-                        window.dispatchEvent(new PopStateEvent("popstate"));
+                    if (document.getElementById(page)) {
+                        document.getElementById(page).scrollIntoView({
+                            behavior: "smooth",
+                        });
                         return true;
                     }
 
-                    return false;
+                    location.hash = page;
+                    return true;
                 }
 
                 // =========================================
-                // NORMALIZE TEXT
+                // NORMALIZE
                 // =========================================
 
                 function normalize(text) {
-                    return text
+                    return String(text || "")
                         .toLowerCase()
                         .replace(/[.,!?;:]/g, "")
                         .replace(/\s+/g, " ")
                         .trim();
                 }
 
-                // =========================================
-                // PAGE MATCHING
-                // =========================================
-
                 function matchPage(text) {
                     const words = normalize(text);
 
                     for (const [page, keywords] of Object.entries(pages)) {
                         for (const keyword of keywords) {
-                            const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-                            const regex = new RegExp("(^|\\s)" + escaped + "($|\\s)", "i");
-
-                            if (regex.test(words)) return page;
+                            if (words.includes(keyword)) return page;
                         }
                     }
 
@@ -1949,15 +1850,14 @@
 
                     try {
                         const raw = localStorage.getItem("knowledgeRoom_simple_v2");
-
                         if (raw) return JSON.parse(raw);
                     } catch (e) {}
 
                     return null;
                 }
 
-                function escapeHtml(s) {
-                    return String(s == null ? "" : s)
+                function escapeHtml(value) {
+                    return String(value == null ? "" : value)
                         .replace(/&/g, "&amp;")
                         .replace(/</g, "&lt;")
                         .replace(/>/g, "&gt;")
@@ -1967,26 +1867,15 @@
 
                 function searchAll(query) {
                     const q = normalize(query);
-
                     if (!q) return [];
 
                     const data = getStore();
-
                     if (!data) return [];
 
                     const out = [];
 
-                    // TOPICS
                     (data.topics || []).forEach((t) => {
-                        const hay = (
-                            (t.title || "") +
-                            " " +
-                            (t.description || "") +
-                            " " +
-                            (t.category || "") +
-                            " " +
-                            (t.notes || "")
-                        ).toLowerCase();
+                        const hay = [t.title, t.description, t.category, t.notes].join(" ").toLowerCase();
 
                         if (hay.includes(q)) {
                             out.push({
@@ -2000,43 +1889,31 @@
                         }
                     });
 
-                    // QUOTES
-                    (data.quotes || []).forEach((qq) => {
-                        const quoteText = qq.text || "";
-
-                        const hay = (quoteText + " " + (qq.author || "") + " " + (qq.source || "")).toLowerCase();
+                    (data.quotes || []).forEach((t) => {
+                        const hay = [t.text, t.author, t.source].join(" ").toLowerCase();
 
                         if (hay.includes(q)) {
                             out.push({
                                 type: "Iqtibos",
                                 page: "quotes",
-                                id: qq.id,
-                                title: quoteText.slice(0, 70) + (quoteText.length > 70 ? "…" : ""),
-                                sub: "— " + (qq.author || "Noma'lum"),
+                                id: t.id,
+                                title: (t.text || "").slice(0, 70),
+                                sub: t.author || "",
                                 kind: "quote",
                             });
                         }
                     });
 
-                    // KNOWLEDGE
-                    (data.knowledge || []).forEach((k) => {
-                        const hay = (
-                            (k.title || "") +
-                            " " +
-                            (k.body || "") +
-                            " " +
-                            (k.category || "") +
-                            " " +
-                            (k.tags || []).join(" ")
-                        ).toLowerCase();
+                    (data.knowledge || []).forEach((t) => {
+                        const hay = [t.title, t.body, t.category, ...(t.tags || [])].join(" ").toLowerCase();
 
                         if (hay.includes(q)) {
                             out.push({
                                 type: "Bilim",
                                 page: "knowledge",
-                                id: k.id,
-                                title: k.title,
-                                sub: k.category || "",
+                                id: t.id,
+                                title: t.title,
+                                sub: t.category || "",
                                 kind: "knowledge",
                             });
                         }
@@ -2045,133 +1922,107 @@
                     return out;
                 }
 
-                // =========================================
-                // RENDER SEARCH RESULTS
-                // =========================================
-
                 function renderSearchResults(results, query) {
                     clearResults();
 
                     if (!results.length) {
-                        resultsBox.innerHTML = `
-                <div style="font-size:12px;color:#b04a4a;">
-                    "${escapeHtml(query)}" topilmadi
-                </div>
-            `;
+                        resultsBox.textContent = `"${query}" topilmadi`;
                         return;
                     }
 
-                    resultsBox.innerHTML = results
-                        .slice(0, 6)
-                        .map(
-                            (r, i) => `
-                <div data-idx="${i}"
-                    style="padding:6px 8px;border-bottom:1px solid var(--vc-result-border);cursor:pointer;font-size:12px;">
+                    results.slice(0, 6).forEach((r, index) => {
+                        const item = document.createElement("div");
+                        item.style.cssText =
+                            "padding:9px;border-bottom:1px solid var(--vc-result-border);cursor:pointer;font-size:12px";
 
-                    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--vc-muted);">
-                        ${escapeHtml(r.type)}
-                    </div>
+                        const type = document.createElement("div");
+                        type.textContent = r.type;
+                        type.style.color = "var(--vc-muted)";
 
-                    <div style="font-weight:600;color:var(--vc-text);">
-                        ${escapeHtml(r.title)}
-                    </div>
+                        const title = document.createElement("div");
+                        title.textContent = r.title || "";
+                        title.style.fontWeight = "600";
 
-                    ${
-                        r.sub
-                            ? `
-                        <div style="color:var(--vc-muted);font-size:11px;">
-                            ${escapeHtml(r.sub)}
-                        </div>
-                    `
-                            : ""
-                    }
-                </div>
-            `,
-                        )
-                        .join("");
+                        const sub = document.createElement("div");
+                        sub.textContent = r.sub || "";
+                        sub.style.color = "var(--vc-muted)";
 
-                    resultsBox.querySelectorAll("[data-idx]").forEach((el) => {
-                        el.addEventListener("click", (e) => {
+                        item.append(type, title, sub);
+
+                        item.addEventListener("click", (e) => {
                             e.stopPropagation();
-
-                            const idx = parseInt(el.dataset.idx, 10);
-                            const r = results[idx];
-
-                            if (!r) return;
 
                             openPage(r.page);
 
-                            if (r.kind === "topic" && r.id && window.Router) {
-                                window.Router.go("topics", r.id);
+                            if (r.id && window.Router) {
+                                window.Router.go(r.page, r.id);
                             }
 
                             clearResults();
                             setStatus("✅ " + r.page + " opened");
                         });
+
+                        resultsBox.appendChild(item);
                     });
                 }
 
                 // =========================================
-                // VOICE COMMANDS
+                // COMMANDS
                 // =========================================
 
                 function processCommand(raw) {
                     const text = normalize(raw);
+                    if (!text) return;
 
                     console.log("VOICE COMMAND:", text);
 
-                    if (!text) return;
-
-                    // WAKE UP
-                    if (/\b(wake up|wakeup|uyg'on|uygon|uyg'onish)\b/i.test(text)) {
+                    if (text.includes("wake up") || text.includes("uyg'on") || text.includes("uygon")) {
                         wakeUp();
                         return;
                     }
 
                     if (!awake) return;
 
-                    // DARK MODE
-                    if (/\b(dark mode|dark theme|qorong.?i rejim|qora rejim|tungi rejim)\b/i.test(text)) {
+                    if (
+                        text.includes("dark mode") ||
+                        text.includes("dark theme") ||
+                        text.includes("qorong'i rejim") ||
+                        text.includes("qora rejim") ||
+                        text.includes("tungi rejim")
+                    ) {
                         changeTheme("dark");
                         return;
                     }
 
-                    // LIGHT MODE
-                    if (/\b(light mode|light theme|yorug.? rejim|oq rejim|kunduzgi rejim)\b/i.test(text)) {
+                    if (
+                        text.includes("light mode") ||
+                        text.includes("light theme") ||
+                        text.includes("yorug' rejim") ||
+                        text.includes("oq rejim") ||
+                        text.includes("kunduzgi rejim")
+                    ) {
                         changeTheme("light");
                         return;
                     }
 
-                    // SLEEP
-                    if (/\b(sleep|uxla|to'xta|toxta|o'chir|ochir)\b/i.test(text)) {
+                    if (text === "sleep" || text === "uxla" || text === "to'xta" || text === "toxta") {
                         sleep();
                         return;
                     }
 
-                    // SEARCH
                     const searchMatch =
                         text.match(/^(?:qidir(?:ib)?\s+(.+))$/) ||
                         text.match(/^(.+?)\s+(?:ni\s+)?qidir(?:ib)?(?:\s+ber)?$/) ||
-                        text.match(/^search\s+(.+)$/) ||
-                        text.match(/^(.+?)\s+search$/);
+                        text.match(/^search\s+(.+)$/);
 
                     if (searchMatch) {
-                        let query = searchMatch[1].trim();
-
-                        query = query.replace(/\s+ni$/i, "").trim();
-
-                        if (!query) {
-                            speak("What should I search for?");
-                            return;
-                        }
-
+                        const query = searchMatch[1].trim();
                         const results = searchAll(query);
 
-                        if (results.length === 0) {
-                            speak(`No results for ${query}`);
+                        if (!results.length) {
                             setStatus(`❌ "${query}" topilmadi`);
+                            speak("No results found");
                             clearResults();
-                            showHeard(raw);
                             return;
                         }
 
@@ -2179,37 +2030,24 @@
 
                         openPage(best.page);
 
-                        if (best.kind === "topic" && best.id && window.Router) {
-                            window.Router.go("topics", best.id);
+                        if (best.id && window.Router) {
+                            window.Router.go(best.page, best.id);
                         }
 
-                        speak(`Found ${results.length} results for ${query}. Opening ${best.page}.`);
-
-                        setStatus(`🔍 "${query}" — ${results.length} natija`);
-
                         renderSearchResults(results, query);
+                        setStatus(`🔍 ${results.length} natija`);
+                        speak(`Found ${results.length} results`);
 
                         return;
                     }
 
-                    // PAGE OPENING
                     const page = matchPage(text);
 
-                    const openWords = /\b(och|ochib ber|open|kir|o't|o'tkaz|sahifasi|sahifasini)\b/i.test(text);
-
                     if (page) {
-                        const success = openPage(page);
-
-                        speak(success ? `Opening ${page}` : `Sorry, ${page} not found`);
-
+                        openPage(page);
                         setStatus("✅ " + page + " opened");
+                        speak("Opening " + page);
                         clearResults();
-
-                        return;
-                    }
-
-                    if (openWords) {
-                        speak("Page not found");
                         return;
                     }
 
@@ -2217,13 +2055,23 @@
                 }
 
                 // =========================================
-                // LISTENING
+                // MICROPHONE / RECOGNITION
                 // =========================================
 
                 function startListening() {
-                    if (!awake || manualStop || isStarting) return;
-                    if (recognition) return;
-                    if (!micGranted) return;
+                    if (!SpeechRecognition) {
+                        setStatus("❌ Speech Recognition unsupported");
+                        awake = false;
+                        return;
+                    }
+
+                    if (!awake || manualStop || isStarting || recognition) return;
+
+                    if (!window.isSecureContext) {
+                        awake = false;
+                        setStatus("❌ HTTPS required");
+                        return;
+                    }
 
                     try {
                         isStarting = true;
@@ -2238,9 +2086,8 @@
 
                         rec.onstart = () => {
                             isStarting = false;
-
+                            permissionGranted = true;
                             languageLabel.textContent = currentLang === "uz-UZ" ? "UZ" : "EN";
-
                             setStatus("🎙 Listening: " + currentLang);
                         };
 
@@ -2268,63 +2115,65 @@
 
                         rec.onerror = (event) => {
                             console.warn("Recognition error:", event.error);
-
                             isStarting = false;
-
-                            if (event.error === "language-not-supported" && !fallbackUsed) {
-                                fallbackUsed = true;
-                                currentLang = "en-US";
-                            }
 
                             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                                 awake = false;
                                 manualStop = true;
                                 setStatus("❌ Microphone blocked");
+                            } else if (event.error === "audio-capture") {
+                                setStatus("❌ Microphone not found");
+                            } else if (event.error === "network") {
+                                setStatus("❌ Internet required for speech service");
+                            } else if (event.error === "language-not-supported" && !fallbackUsed) {
+                                fallbackUsed = true;
+                                currentLang = "en-US";
                             }
                         };
 
                         rec.onend = () => {
-                            if (recognition === rec) {
-                                recognition = null;
-                            }
+                            if (recognition === rec) recognition = null;
 
                             isStarting = false;
 
                             if (awake && !manualStop) {
                                 clearTimeout(restartTimer);
-
-                                restartTimer = setTimeout(startListening, 500);
+                                restartTimer = setTimeout(startListening, 800);
                             }
                         };
 
                         rec.start();
                     } catch (error) {
-                        console.error(error);
+                        console.error("Recognition start:", error);
 
                         recognition = null;
                         isStarting = false;
 
+                        if (error.name === "NotAllowedError" || error.name === "SecurityError") {
+                            awake = false;
+                            manualStop = true;
+                            setStatus("❌ Microphone permission denied");
+                            return;
+                        }
+
+                        setStatus("⚠️ Could not start microphone");
+
                         if (awake && !manualStop) {
-                            restartTimer = setTimeout(startListening, 1000);
+                            restartTimer = setTimeout(startListening, 1500);
                         }
                     }
                 }
 
-                // =========================================
-                // STOP LISTENING
-                // =========================================
-
                 function stopListening() {
                     manualStop = true;
-
                     clearTimeout(restartTimer);
 
-                    if (recognition) {
-                        const oldRecognition = recognition;
-                        recognition = null;
+                    const old = recognition;
+                    recognition = null;
 
+                    if (old) {
                         try {
-                            oldRecognition.abort();
+                            old.abort();
                         } catch (e) {}
                     }
 
@@ -2332,55 +2181,49 @@
                 }
 
                 // =========================================
-                // WAKE UP
+                // WAKE / SLEEP
                 // =========================================
 
-                async function wakeUp() {
+                function wakeUp() {
                     if (awake) return;
 
-                    if (!micGranted) {
-                        const permission = await requestMic();
+                    if (!window.isSecureContext) {
+                        setStatus("❌ HTTPS required");
+                        return;
+                    }
 
-                        if (!permission) return;
+                    if (!SpeechRecognition) {
+                        setStatus("❌ Browser does not support voice");
+                        return;
                     }
 
                     awake = true;
                     manualStop = false;
+                    fallbackUsed = false;
 
                     setStatus("🟢 Controller awake");
 
-                    speak("Controller awake", startListening);
+                    // Start immediately after user's tap.
+                    startListening();
                 }
-
-                // =========================================
-                // SLEEP
-                // =========================================
 
                 function sleep() {
                     awake = false;
-
                     stopListening();
 
                     setStatus("🌙 Controller sleeping");
-
                     showHeard("");
                     clearResults();
 
-                    speak("Controller off");
+                    if (synth) synth.cancel();
                 }
 
                 // =========================================
-                // CONTROLLER CLICK
+                // USER INTERACTION
                 // =========================================
 
-                ui.addEventListener("click", async (e) => {
+                ui.addEventListener("click", (e) => {
                     if (e.target.closest("#vcResults")) return;
-
-                    if (!micGranted) {
-                        const ok = await requestMic();
-
-                        if (!ok) return;
-                    }
 
                     if (awake) {
                         sleep();
@@ -2390,7 +2233,18 @@
                 });
 
                 // =========================================
-                // GLOBAL API
+                // VISIBILITY
+                // =========================================
+
+                document.addEventListener("visibilitychange", () => {
+                    if (document.hidden && awake) {
+                        stopListening();
+                        setStatus("⏸ App backgrounded");
+                    }
+                });
+
+                // =========================================
+                // PUBLIC API
                 // =========================================
 
                 window.VoiceController = {
@@ -2398,14 +2252,14 @@
                     sleep: sleep,
                     say: speak,
                     isAwake: () => awake,
-                    requestMic: requestMic,
                     search: searchAll,
                     setTheme: changeTheme,
+                    processCommand,
                 };
 
-                setStatus("🎙 Tap to enable microphone");
+                setStatus("🎙 Tap to enable voice");
 
-                console.log("Voice Controller ready");
+                console.log("The Knowledge Room Voice Controller ready");
             })();
         </script>
 
